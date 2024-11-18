@@ -21,16 +21,17 @@ const ManageUsersAdmin: React.FC = () => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const data = await fetchUsers(page, pageSize);
+      // Agora, chamando com os argumentos opcionais
+      const data = await fetchUsers(page, pageSize, null, null);
       setUsers(data.content);
       setTotalElements(data.totalElements);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       message.error('Erro ao carregar usuários.');
     } finally {
       setLoading(false);
     }
   };
+  
 
   const showAddUserModal = () => {
     setIsModalVisible(true);

@@ -58,7 +58,7 @@ const ManageUsersLaboratorist: React.FC = () => {
     {
       title: 'Ações',
       key: 'actions',
-      render: (_, record) => (
+      render: (_: any) => (
         <>
           <Button type="link">Editar</Button>
           <Button type="link" style={{ color: 'red' }}>Remover</Button>

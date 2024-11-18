@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Card,
-  Form,
-  Input,
-  message,
-  Upload,
-  Switch,
-  Button,
-} from "antd";
+import { Card, Form, Input, message, Upload, Switch, Button } from "antd";
 import { UploadOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import {
   fetchActivityWithCommentsById,
@@ -25,7 +17,7 @@ const ViewActivity: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
   const [activity, setActivity] = useState<ActivityView | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [tempPhotoUrl, setTempPhotoUrl] = useState<string | null>(null); // Armazena temporariamente a nova foto
+  const [tempPhotoUrl, setTempPhotoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false);
   const [newComment, setNewComment] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
@@ -47,7 +39,7 @@ const ViewActivity: React.FC = () => {
 
   const onFinish = (values: Partial<ActivityView>) => {
     console.log("Form values:", values);
-    setPhotoUrl(tempPhotoUrl); // Confirma a imagem temporária ao salvar
+    setPhotoUrl(tempPhotoUrl);
     message.success("Atividade atualizada com sucesso!");
   };
 
@@ -59,8 +51,10 @@ const ViewActivity: React.FC = () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setTempPhotoUrl(reader.result as string); // Armazena a imagem temporariamente
-      message.success("Imagem carregada com sucesso! Clique em 'Salvar Alterações' para confirmar.");
+      setTempPhotoUrl(reader.result as string);
+      message.success(
+        "Imagem carregada com sucesso! Clique em 'Salvar Alterações' para confirmar."
+      );
     };
     reader.readAsDataURL(file);
   };
@@ -168,9 +162,7 @@ const ViewActivity: React.FC = () => {
           </Button>
         </div>
 
-        <div
-          style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}
-        >
+        <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
           <Form
             layout="vertical"
             initialValues={{
@@ -217,20 +209,21 @@ const ViewActivity: React.FC = () => {
 
           <div style={{ textAlign: "center", width: "30%", aspectRatio: "1" }}>
             <img
-              src={tempPhotoUrl || photoUrl}
+              src={tempPhotoUrl || photoUrl || undefined}
               alt="Foto da Atividade"
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover", // Garante que a imagem preencha o contêiner sem distorção
+                objectFit: "cover",
                 borderRadius: "8px",
               }}
             />
+
             <Upload
               beforeUpload={beforeUpload}
               showUploadList={false}
               accept="image/png, image/jpeg, image/gif"
-              disabled={!isEditing} // Desativa o upload quando não está no modo de edição
+              disabled={!isEditing}
             >
               <Button icon={<UploadOutlined />} disabled={!isEditing}>
                 Alterar Imagem

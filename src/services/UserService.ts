@@ -5,10 +5,15 @@ import { PaginatedUserResponse } from '../models/User';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchUsers = async (page: number, size: number, selectedFilter: string | null, filterValue: string | null): Promise<PaginatedUserResponse> => {
+export const fetchUsers = async (
+  page: number,
+  size: number,
+  selectedFilter?: string | null,
+  filterValue?: string | null
+): Promise<PaginatedUserResponse> => {
   try {
     const response = await axios.get<PaginatedUserResponse>(`${API_URL}user/list`, {
-      params: { page, size },
+      params: { page, size, selectedFilter, filterValue },
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -22,6 +27,7 @@ export const fetchUsers = async (page: number, size: number, selectedFilter: str
     }
   }
 };
+
 
 export const registerUser = async (userData: {
   name: string;

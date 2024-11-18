@@ -28,9 +28,9 @@ const categories = [
 
 // Sample components for display in cards
 const components = [
-  { name: 'Arduino Uno', image: 'link-to-image-1', category: 'Arduino' },
-  { name: 'Arduino Mini', image: 'link-to-image-2', category: 'Arduino' },
-  { name: 'Raspberry Pi', image: 'link-to-image-3', category: 'Raspberry' },
+  { name: 'Arduino Uno', image: 'link-to-image-1', category: 'arduino' },
+  { name: 'Arduino Mini', image: 'link-to-image-2', category: 'arduino' },
+  { name: 'Raspberry Pi', image: 'link-to-image-3', category: 'raspberry' },
 ];
 
 const ComponentsLibraryStudent: React.FC = () => {
@@ -38,22 +38,29 @@ const ComponentsLibraryStudent: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>(''); // Estado para o input de componente
   const [cascaderValue, setCascaderValue] = useState<string[]>([]); // Estado para o Cascader
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 20; // Number of components per page
+  const pageSize = 20; // Número de componentes por página
 
   const handleSearchTypeChange = (value: string) => {
     setSearchType(value);
     setInputValue(''); // Limpa o input ao mudar o tipo
     setCascaderValue([]); // Limpa o cascader ao mudar o tipo
-    setCurrentPage(1); // Reset to first page on search type change
+    setCurrentPage(1); // Reset para a primeira página ao mudar o tipo
   };
 
-  // Calculate the components to display on the current page
+  // Filtrar componentes com base no Cascader ou Input
+  const filteredComponents =
+    searchType === 'category' && cascaderValue.length > 0
+      ? components.filter((component) =>
+          cascaderValue.some((value) => component.category.includes(value))
+        )
+      : components;
+
   const startIndex = (currentPage - 1) * pageSize;
-  const currentComponents = components.slice(startIndex, startIndex + pageSize);
+  const currentComponents = filteredComponents.slice(startIndex, startIndex + pageSize);
 
   return (
     <div>
-       <HeaderCard />
+      <HeaderCard />
       <Collapse defaultActiveKey={['1']}>
         <Panel header="Filtro de Busca" key="1">
           <Row gutter={10}>
@@ -85,12 +92,14 @@ const ComponentsLibraryStudent: React.FC = () => {
                 />
               )}
             </Col>
-            <Button type="primary">Aplicar Filtro</Button>
+            <Button type="primary" onClick={() => console.log('Filtro aplicado com:', cascaderValue)}>
+              Aplicar Filtro
+            </Button>
           </Row>
         </Panel>
       </Collapse>
 
-      {/* Grid of Components */}
+      {/* Grid de Componentes */}
       <Row gutter={6} style={{ marginTop: '20px' }}>
         {currentComponents.map((component) => (
           <Col span={6} key={component.name}>
@@ -98,23 +107,20 @@ const ComponentsLibraryStudent: React.FC = () => {
               hoverable
               cover={<img alt={component.name} src={component.image} />}
             >
-              <Card.Meta 
-                title={component.name} 
-                description={
-                  <Link to={`/student/components-library/${component.name}`}>Mais informações</Link>
-
-                } 
+              <Card.Meta
+                title={component.name}
+                description={<Link to={`/student/components-library/${component.name}`}>Mais informações</Link>}
               />
             </Card>
           </Col>
         ))}
       </Row>
 
-      {/* Pagination */}
+      {/* Paginação */}
       <Pagination
         current={currentPage}
         pageSize={pageSize}
-        total={components.length}
+        total={filteredComponents.length}
         onChange={(page) => setCurrentPage(page)}
         style={{ marginTop: '20px', textAlign: 'center' }}
       />

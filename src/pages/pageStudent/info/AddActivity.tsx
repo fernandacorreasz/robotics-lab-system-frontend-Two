@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Form, Input, Button, DatePicker, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { UploadChangeParam } from "antd/lib/upload";
+import { UploadFile } from "antd/lib/upload/interface";
 import { createActivity } from "../../../services/ActivityService";
 import { Activity } from "../../../models/Activity";
 import moment from "moment";
@@ -26,11 +28,12 @@ const AddActivity: React.FC = () => {
     try {
       const activityData: Activity = {
         ...values,
-        timeSpent: values.timeSpent * 60, // Conversão para minutos
+        timeSpent: values.timeSpent * 60,
         startDate: values.startDate.toISOString(),
         endDate: values.endDate.toISOString(),
-        user: { id: localStorage.getItem("userId") || "" },
-        userCode: "CodigoExemplo", // Substitua por um código dinâmico se necessário
+        userId: localStorage.getItem("userId") || "",
+        id: "",
+        userEmail: ""
       };
 
       await createActivity(activityData, file || undefined);
@@ -41,8 +44,11 @@ const AddActivity: React.FC = () => {
     }
   };
 
-  const handleFileChange = (info: { file: { originFileObj: File } }) => {
-    setFile(info.file.originFileObj);
+  const handleFileChange = (info: UploadChangeParam<UploadFile<any>>) => {
+    const file = info.file.originFileObj;
+    if (file) {
+      setFile(file);
+    }
   };
 
   return (
@@ -73,7 +79,7 @@ const AddActivity: React.FC = () => {
         </Form.Item>
         <Form.Item label="Imagem (Opcional)">
           <Upload
-            beforeUpload={() => false} 
+            beforeUpload={() => false}
             onChange={handleFileChange}
             maxCount={1}
           >
