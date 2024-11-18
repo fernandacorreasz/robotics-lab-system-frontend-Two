@@ -1,0 +1,16 @@
+[
+    {
+        "id": "1",
+        "subCategoryId": "subcat1",
+        "totalQuantity": 50,
+        "subCategoryName": "Placas e Módulos",
+        "categoryId": "cat1"
+    },
+    {
+        "id": "2",
+        "subCategoryId": "subcat2",
+        "totalQuantity": 30,
+        "subCategoryName": "Sensores de Temperatura",
+        "categoryId": "cat2"
+    }
+]

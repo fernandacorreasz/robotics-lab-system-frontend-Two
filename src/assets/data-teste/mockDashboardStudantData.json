@@ -1,0 +1,35 @@
+{
+    "cards": [
+      {
+        "title": "Atividades Concluídas",
+        "metrics": {
+          "totalActivities": 50,
+          "completed": 35,
+          "inProgress": 10,
+          "notStarted": 5
+        }
+      },
+      {
+        "title": "Tempo Investido",
+        "metrics": {
+          "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "data": [120, 150, 180, 160, 200, 220] 
+        }
+      },
+      {
+        "title": "Componentes Utilizados",
+        "metrics": {
+          "labels": ["Resistor", "Capacitor", "LED", "Sensor", "Motor"],
+          "data": [40, 20, 35, 15, 10]
+        }
+      },
+      {
+        "title": "Participação no Fórum",
+        "metrics": {
+          "labels": ["Postagens", "Respostas", "Curtidas"],
+          "data": [10, 25, 50]
+        }
+      }
+    ]
+  }
+  

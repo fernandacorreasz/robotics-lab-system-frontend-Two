@@ -1,0 +1,99 @@
+{
+  "content": [
+    {
+      "id": "e2a38b1c-f65d-441b-8fba-38ddce4425e9",
+      "activityTitle": "Seguidor de Linha",
+      "activityDescription": "Descrição da atividade",
+      "activityStatus": "InProgress",
+      "timeSpent": 120,
+      "startDate": "2024-10-20T10:00:00.000+00:00",
+      "endDate": "2024-10-20T12:00:00.000+00:00"
+    },
+    {
+      "id": "101f9cd9-ca61-4ea5-9407-f2073404be7d",
+      "activityTitle": "Trekking",
+      "activityDescription": "Descrição da atividade",
+      "activityStatus": "Completed",
+      "timeSpent": 120,
+      "startDate": "2024-10-20T10:00:00.000+00:00",
+      "endDate": "2024-10-20T12:00:00.000+00:00"
+    },
+    {
+      "id": "b4e12dfc-a371-46f9-91e8-0d132589a1c1",
+      "activityTitle": "Simulação Robótica",
+      "activityDescription": "Descrição da simulação robótica",
+      "activityStatus": "Completed",
+      "timeSpent": 180,
+      "startDate": "2024-10-18T09:00:00.000+00:00",
+      "endDate": "2024-10-18T12:00:00.000+00:00"
+    },
+    {
+      "id": "f44c4ad5-f1d7-4b1e-9319-bf71c0b0f848",
+      "activityTitle": "Montagem de Sensor",
+      "activityDescription": "Descrição da montagem de sensor",
+      "activityStatus": "InProgress",
+      "timeSpent": 90,
+      "startDate": "2024-10-19T14:00:00.000+00:00",
+      "endDate": "2024-10-19T15:30:00.000+00:00"
+    },
+    {
+      "id": "d3a2ec10-f148-4749-bfb6-df53400dcdab",
+      "activityTitle": "Teste de Componentes",
+      "activityDescription": "Teste e validação de novos componentes eletrônicos",
+      "activityStatus": "Completed",
+      "timeSpent": 60,
+      "startDate": "2024-10-18T13:00:00.000+00:00",
+      "endDate": "2024-10-18T14:00:00.000+00:00"
+    },
+    {
+      "id": "fa5bc8df-065b-4b79-9ed6-8c4a9e79f834",
+      "activityTitle": "Desenvolvimento Web",
+      "activityDescription": "Desenvolvimento de uma página web para o projeto",
+      "activityStatus": "NotStarted",
+      "timeSpent": 0,
+      "startDate": "2024-10-22T09:00:00.000+00:00",
+      "endDate": "2024-10-22T12:00:00.000+00:00"
+    },
+    {
+      "id": "ad3f892e-cf24-4e27-91a9-3adcf90c0b24",
+      "activityTitle": "Projeto de Design",
+      "activityDescription": "Trabalho de design para o robô seguidor de linha",
+      "activityStatus": "InProgress",
+      "timeSpent": 240,
+      "startDate": "2024-10-17T14:00:00.000+00:00",
+      "endDate": "2024-10-17T18:00:00.000+00:00"
+    },
+    {
+      "id": "cd0e1976-5b7d-4c96-8ef9-8710b4eb9c21",
+      "activityTitle": "Configuração de Hardware",
+      "activityDescription": "Configuração de hardware para o novo projeto robótico",
+      "activityStatus": "Completed",
+      "timeSpent": 120,
+      "startDate": "2024-10-16T11:00:00.000+00:00",
+      "endDate": "2024-10-16T13:00:00.000+00:00"
+    },
+    {
+      "id": "fbb5dd93-60b2-43b4-b72e-16a1d03e1a1f",
+      "activityTitle": "Ajustes no Código",
+      "activityDescription": "Correção de bugs e ajustes no código do robô",
+      "activityStatus": "InProgress",
+      "timeSpent": 150,
+      "startDate": "2024-10-15T10:00:00.000+00:00",
+      "endDate": "2024-10-15T12:30:00.000+00:00"
+    },
+    {
+      "id": "dcd02d54-8e4a-4b76-b731-9e19f7d1a732",
+      "activityTitle": "Treinamento em IA",
+      "activityDescription": "Treinamento de inteligência artificial para robôs",
+      "activityStatus": "NotStarted",
+      "timeSpent": 0,
+      "startDate": "2024-10-23T10:00:00.000+00:00",
+      "endDate": "2024-10-23T12:00:00.000+00:00"
+    }
+  ],
+  "totalElements": 10,
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 5
+  }
+}

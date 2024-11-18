@@ -1,0 +1,22 @@
+[
+    {
+        "id": "1",
+        "componentId": "comp1",
+        "name": "Arduino Uno",
+        "serialNumber": "A123456",
+        "description": "Placa de prototipagem",
+        "quantity": 10,
+        "subCategoryId": "subcat1",
+        "categoryId": "cat1"
+    },
+    {
+        "id": "2",
+        "componentId": "comp2",
+        "name": "Sensor DHT11",
+        "serialNumber": "S123456",
+        "description": "Sensor de temperatura e umidade",
+        "quantity": 15,
+        "subCategoryId": "subcat2",
+        "categoryId": "cat2"
+    }
+]

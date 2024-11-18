@@ -1,0 +1,26 @@
+[
+    {
+      "id": 1,
+      "title": "Como usar o Arduino?",
+      "author": "Usuário 1",
+      "date": "01/01/2024",
+      "content": "Alguém pode me dar dicas sobre como usar o Arduino para iniciantes?",
+      "comments": [
+        {
+          "id": 1,
+          "content": "Experimente usar o IDE do Arduino.",
+          "author": "Usuário 2",
+          "date": "02/01/2024"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Problemas com Raspberry Pi",
+      "author": "Usuário 2",
+      "date": "02/01/2024",
+      "content": "Estou enfrentando dificuldades ao configurar o Raspberry Pi. Alguma ajuda?",
+      "comments": []
+    }
+  ]
+  

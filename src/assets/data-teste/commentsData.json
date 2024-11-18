@@ -1,0 +1,23 @@
+{
+    "comments": [
+      {
+        "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+        "activityId": "e2a38b1c-f65d-441b-8fba-38ddce4425e9",
+        "text": "Iniciei o projeto, tudo funcionando!",
+        "createdDate": "2024-10-21T10:00:00.000Z"
+      },
+      {
+        "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6q",
+        "activityId": "101f9cd9-ca61-4ea5-9407-f2073404be7d",
+        "text": "Tive dificuldades na integração com o sensor.",
+        "createdDate": "2024-10-21T11:00:00.000Z"
+      },
+      {
+        "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6r",
+        "activityId": "fbb5dd93-60b2-43b4-b72e-16a1d03e1a1f",
+        "text": "Ajustei o código para evitar erros de compilação.",
+        "createdDate": "2024-10-22T09:30:00.000Z"
+      }
+    ]
+  }
+  
