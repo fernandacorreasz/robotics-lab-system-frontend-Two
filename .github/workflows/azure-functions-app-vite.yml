@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Cache npm packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+        
+    - name: Install Dependencies
+      run: npm ci
+        
+    - name: Build
+      run: npm run build
+        
+    - name: Build Docker image
+      run: |
+        docker build -t vite-typescript-app:latest .
+        docker save vite-typescript-app:latest -o vite-typescript-app.tar
+        
+    - name: Deploy to Production
+      env:
+        PROD_HOST: ${{ secrets.PROD_HOST }}
+        PROD_USER: ${{ secrets.PROD_USER }}
+        PROD_PASSWORD: ${{ secrets.PROD_PASSWORD }}
+      run: |
+        sshpass -p "$PROD_PASSWORD" scp -o StrictHostKeyChecking=no vite-typescript-app.tar $PROD_USER@$PROD_HOST:/tmp
+        sshpass -p "$PROD_PASSWORD" ssh -o StrictHostKeyChecking=no $PROD_USER@$PROD_HOST "docker load -i /tmp/vite-typescript-app.tar && rm /tmp/vite-typescript-app.tar && docker image prune -f && cd /home/$PROD_USER/projeto-tcc && docker-compose up -d $PROD_IMAGE_NAME"
