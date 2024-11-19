@@ -11,52 +11,61 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Necessário para análise do SonarQube
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        
-    - name: Cache npm packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-        
-    - name: Install Dependencies
-      run: npm ci
+      # Checkout do código
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Necessário para relevância na análise do SonarQube
+      
+      # Configuração do Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      # Cache de pacotes npm
+      - name: Cache npm packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+          
+      # Instalação de dependências
+      - name: Install Dependencies
+        run: npm ci
+          
+      # Build da aplicação
+      - name: Build
+        run: npm run build
 
-    # Passo para análise com SonarQube
-    - name: Run SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Análise com o SonarQube
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    # (Opcional) Verifica a qualidade do código com SonarQube Quality Gate
-    - name: Check SonarQube Quality Gate
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    - name: Build
-      run: npm run build
-        
-    - name: Build Docker image
-      run: |
-        docker build -t vite-typescript-app:latest .
-        docker save vite-typescript-app:latest -o vite-typescript-app.tar
-        
-    - name: Deploy to Production
-      env:
-        PROD_HOST: ${{ secrets.PROD_HOST }}
-        PROD_USER: ${{ secrets.PROD_USER }}
-        PROD_PASSWORD: ${{ secrets.PROD_PASSWORD }}
-      run: |
-        sshpass -p "$PROD_PASSWORD" scp -o StrictHostKeyChecking=no vite-typescript-app.tar $PROD_USER@$PROD_HOST:/tmp
-        sshpass -p "$PROD_PASSWORD" ssh -o StrictHostKeyChecking=no $PROD_USER@$PROD_HOST "docker load -i /tmp/vite-typescript-app.tar && rm /tmp/vite-typescript-app.tar && docker image prune -f && cd /home/$PROD_USER/projeto-tcc && docker-compose up -d $PROD_IMAGE_NAME"
+      # (Opcional) Verificação do Quality Gate do SonarQube
+      # Essa etapa garante que a análise deve passar no Quality Gate antes de prosseguir
+      - name: Check SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
+      # Build da imagem Docker
+      - name: Build Docker image
+        run: |
+          docker build -t vite-typescript-app:latest .
+          docker save vite-typescript-app:latest -o vite-typescript-app.tar
+          
+      # Deploy para Produção
+      - name: Deploy to Production
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_PASSWORD: ${{ secrets.PROD_PASSWORD }}
+        run: |
+          sshpass -p "$PROD_PASSWORD" scp -o StrictHostKeyChecking=no vite-typescript-app.tar $PROD_USER@$PROD_HOST:/tmp
+          sshpass -p "$PROD_PASSWORD" ssh -o StrictHostKeyChecking=no $PROD_USER@$PROD_HOST "docker load -i /tmp/vite-typescript-app.tar && rm /tmp/vite-typescript-app.tar && docker image prune -f && cd /home/$PROD_USER/projeto-tcc && docker-compose up -d $PROD_IMAGE_NAME"
