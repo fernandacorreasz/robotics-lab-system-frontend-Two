@@ -3,7 +3,8 @@
 
 Este é um sistema de controle desenvolvido de forma didática, com foco no gerenciamento de um laboratório de robótica. Ele visa simplificar o controle de equipamentos, atividades e fluxos administrativos, sendo também uma entrega de portfólio acadêmico para a formação em Engenharia de Software.
 
-![Vídeo-sem-título-‐-Feito-com-o-Clipchamp (1)](https://github.com/user-attachments/assets/a826ad92-eb24-437e-a7cf-1d3ceb04c1c1)
+
+https://github.com/user-attachments/assets/9fea6bcc-2783-4c7b-9e71-77122846638d
 
 
 ## Repositórios
