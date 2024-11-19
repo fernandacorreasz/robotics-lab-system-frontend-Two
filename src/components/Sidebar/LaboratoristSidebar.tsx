@@ -27,9 +27,6 @@ const LaboratoristSidebar: React.FC = () => {
       <Menu.Item key="manage-activities" icon={<FileTextOutlined />}>
         <Link to="/laboratorist/manage-activities">Gerenciar Atividades</Link>
       </Menu.Item>
-      <Menu.Item key="notifications" icon={<BellOutlined />}>
-        <Link to="/laboratorist/notifications">Notificações de Alunos</Link>
-      </Menu.Item>
       <Menu.Item key="manage-stock" icon={<StockOutlined />}>
         <Link to="/laboratorist/manage-stock">Gerenciar Estoque</Link>
       </Menu.Item>
@@ -41,6 +38,9 @@ const LaboratoristSidebar: React.FC = () => {
       </Menu.Item>
       <Menu.Item key="manage-users" icon={<UserOutlined />}>
         <Link to="/laboratorist/manage-users">Gerenciar Usuários</Link>
+      </Menu.Item>
+      <Menu.Item key="notifications" icon={<BellOutlined />}>
+        <Link to="/laboratorist/notifications">Notificações de Alunos</Link>
       </Menu.Item>
     </Menu>
   );

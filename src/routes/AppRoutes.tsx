@@ -28,6 +28,7 @@ import ComponentDetails from "../components/ElectronicComponentsinventory/Compon
 import PostDetails from "../components/Forum/PostDetails";
 import ViewActivity from "../pages/pageStudent/info/ViewActivity";
 import AddActivity from "../pages/pageStudent/info/AddActivity";
+import BulkAddComponentsPage from "../pages/pageLaboratorista/info/BulkAddComponentsPage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -62,6 +63,7 @@ const AppRoutes: React.FC = () => {
           </PrivateRoute>
         }
       >
+         <Route path="manage-stock/bulk-add" element={<BulkAddComponentsPage />} />
         <Route path="dashboard" element={<DashboardLaboratorist />} />
         <Route
           path="manage-activities"
