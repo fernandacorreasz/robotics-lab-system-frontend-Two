@@ -39,14 +39,20 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Análise com o SonarQube
+   # Análise com o SonarQube
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=robotics-lab-system-frontend-Two
+            -Dsonar.sources=src
+            -Dsonar.language=TypeScript
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      # (Opcional) Verificação do Quality Gate do SonarQube
       # Essa etapa garante que a análise deve passar no Quality Gate antes de prosseguir
       - name: Check SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
