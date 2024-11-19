@@ -110,18 +110,11 @@ export const fetchActivityPhoto = async (activityId: string): Promise<string> =>
     }
   };
 
-  export const createActivity = async (activityData: Activity, file?: File): Promise<void> => {
+  export const createActivity = async (activityData: Activity, p0: File | undefined, formData: FormData): Promise<void> => {
     try {
-      const formData = new FormData();
-      formData.append("activity", JSON.stringify(activityData));
-      
-      if (file) {
-        formData.append("files", file);
-      }
-  
       const response = await axios.post(`${API_URL}activities`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -133,9 +126,10 @@ export const fetchActivityPhoto = async (activityId: string): Promise<string> =>
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data || 'Erro ao criar atividade');
+        throw new Error(error.response?.data || "Erro ao criar atividade");
       } else {
-        throw new Error('Ocorreu um erro inesperado ao criar atividade');
+        throw new Error("Ocorreu um erro inesperado ao criar atividade");
       }
     }
   };
+  

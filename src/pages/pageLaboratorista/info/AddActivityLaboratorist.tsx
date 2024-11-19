@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Form, Input, Button, DatePicker, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
-import { createActivity } from "../../../services/ActivityService";
 import moment from "moment";
+import { createActivity } from "../../../services/ActivityService";
 
 const { Option } = Select;
 
@@ -14,10 +13,10 @@ interface FormValues {
   activityStatus: string;
   timeSpent: number;
   startDate: moment.Moment;
-  endDate: moment.Moment;
+  endDate?: moment.Moment;
 }
 
-const AddActivity: React.FC = () => {
+const AddActivityLaboratorist: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
@@ -59,44 +58,72 @@ const AddActivity: React.FC = () => {
       setFile(uploadedFile);
     }
   };
+
   return (
-    <Card title="Adicionar Nova Atividade">
+    <Card title="Adicionar Nova Atividade - Laboratorista">
       <Form form={form} layout="vertical" onFinish={handleAdd}>
-        <Form.Item name="activityTitle" label="Título" rules={[{ required: true, message: "Insira o título" }]}>
-          <Input />
+        <Form.Item
+          name="activityTitle"
+          label="Título"
+          rules={[{ required: true, message: "Insira o título" }]}
+        >
+          <Input placeholder="Digite o título da atividade" />
         </Form.Item>
-        <Form.Item name="activityDescription" label="Descrição" rules={[{ required: true, message: "Insira a descrição" }]}>
-          <Input.TextArea />
+        <Form.Item
+          name="activityDescription"
+          label="Descrição"
+          rules={[{ required: true, message: "Insira a descrição" }]}
+        >
+          <Input.TextArea placeholder="Digite a descrição da atividade" />
         </Form.Item>
-        <Form.Item name="activityStatus" label="Status" rules={[{ required: true, message: "Selecione o status" }]}>
-          <Select>
+        <Form.Item
+          name="activityStatus"
+          label="Status"
+          rules={[{ required: true, message: "Selecione o status" }]}
+        >
+          <Select placeholder="Selecione o status">
             <Option value="NOT_STARTED">Não Iniciado</Option>
             <Option value="IN_PROGRESS">Em Progresso</Option>
             <Option value="COMPLETED">Concluído</Option>
             <Option value="CANCELED">Cancelado</Option>
           </Select>
         </Form.Item>
-        <Form.Item name="timeSpent" label="Tempo Gasto (em horas)" rules={[{ required: true, message: "Insira o tempo gasto" }]}>
-          <Input type="number" />
+        <Form.Item
+          name="timeSpent"
+          label="Tempo Gasto (em horas)"
+          rules={[{ required: true, message: "Insira o tempo gasto" }]}
+        >
+          <Input type="number" placeholder="Digite o tempo gasto (em horas)" />
         </Form.Item>
-        <Form.Item name="startDate" label="Data de Início" rules={[{ required: true, message: "Selecione a data de início" }]}>
-          <DatePicker showTime />
+        <Form.Item
+          name="startDate"
+          label="Data de Início"
+          rules={[{ required: true, message: "Selecione a data de início" }]}
+        >
+          <DatePicker showTime placeholder="Selecione a data e horário de início" />
         </Form.Item>
-        <Form.Item name="endDate" label="Data de Término" rules={[{ required: true, message: "Selecione a data de término" }]}>
-          <DatePicker showTime />
+        <Form.Item
+          name="endDate"
+          label="Data de Término (Opcional)"
+        >
+          <DatePicker showTime placeholder="Selecione a data e horário de término (se aplicável)" />
+          <p style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>
+            Deixe em branco se a atividade não possuir data de término definida.
+          </p>
         </Form.Item>
         <Form.Item label="Imagem (Opcional)">
           <Upload
             beforeUpload={() => false}
             onChange={handleFileChange}
             maxCount={1}
+            accept="image/png, image/jpeg"
           >
             <Button icon={<UploadOutlined />}>Selecionar Imagem</Button>
           </Upload>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Adicionar
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+            Adicionar Atividade
           </Button>
         </Form.Item>
       </Form>
@@ -104,4 +131,4 @@ const AddActivity: React.FC = () => {
   );
 };
 
-export default AddActivity;
+export default AddActivityLaboratorist;

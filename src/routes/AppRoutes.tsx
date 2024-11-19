@@ -29,12 +29,15 @@ import PostDetails from "../components/Forum/PostDetails";
 import ViewActivity from "../pages/pageStudent/info/ViewActivity";
 import AddActivity from "../pages/pageStudent/info/AddActivity";
 import BulkAddComponentsPage from "../pages/pageLaboratorista/info/BulkAddComponentsPage";
+import AddActivityLaboratorist from "../pages/pageLaboratorista/info/AddActivityLaboratorist";
+import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; // Import your new component
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
 
+      {/* Admin Routes */}
       <Route
         path="/admin"
         element={
@@ -54,7 +57,7 @@ const AppRoutes: React.FC = () => {
         <Route path="profile-settings" element={<ProfileSettingsAdmin />} />
       </Route>
 
-      {/* Rotas do Laboratorista */}
+      {/* Laboratorist Routes */}
       <Route
         path="/laboratorist"
         element={
@@ -63,12 +66,14 @@ const AppRoutes: React.FC = () => {
           </PrivateRoute>
         }
       >
-         <Route path="manage-stock/bulk-add" element={<BulkAddComponentsPage />} />
+        <Route path="manage-stock/bulk-add" element={<BulkAddComponentsPage />} />
         <Route path="dashboard" element={<DashboardLaboratorist />} />
         <Route
           path="manage-activities"
           element={<ManageActivitiesLaboratorist />}
         />
+        <Route path="manage-activities/add" element={<AddActivityLaboratorist />} />
+        <Route path="manage-activities/view/:activityId" element={<ViewActivityLaboratorist />} /> {/* New Route */}
         <Route path="notifications" element={<NotificationsLaboratorist />} />
         <Route path="manage-stock" element={<ManageStockLaboratorist />} />
         <Route path="manage-loans" element={<ManageLoansLaboratorist />} />
@@ -76,7 +81,7 @@ const AppRoutes: React.FC = () => {
         <Route path="manage-users" element={<ManageUsersLaboratorist />} />
       </Route>
 
-
+      {/* Student Routes */}
       <Route
         path="/student"
         element={
@@ -113,7 +118,7 @@ export const routeNames: Record<string, string> = {
   "/admin/performance-reports": "Relatórios de Desempenho",
   "/admin/forum-sac": "Fórum-SAC",
   "/admin/profile-settings": "Configuração de Perfil",
-  
+
   "/laboratorist/dashboard": "Dashboard",
   "/laboratorist/manage-activities": "Gerenciar Atividades",
   "/laboratorist/notifications": "Notificações de Alunos",
