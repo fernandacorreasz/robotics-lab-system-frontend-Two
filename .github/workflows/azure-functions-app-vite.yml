@@ -12,6 +12,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Necessário para análise do SonarQube
     
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -28,7 +30,20 @@ jobs:
         
     - name: Install Dependencies
       run: npm ci
-        
+
+    # Passo para análise com SonarQube
+    - name: Run SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    # (Opcional) Verifica a qualidade do código com SonarQube Quality Gate
+    - name: Check SonarQube Quality Gate
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     - name: Build
       run: npm run build
         
