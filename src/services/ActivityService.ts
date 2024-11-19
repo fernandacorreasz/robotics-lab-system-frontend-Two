@@ -110,7 +110,7 @@ export const fetchActivityPhoto = async (activityId: string): Promise<string> =>
     }
   };
 
-  export const createActivity = async (activityData: Activity, p0: File | undefined, formData: FormData): Promise<void> => {
+  export const createActivity = async (formData: FormData): Promise<void> => {
     try {
       const response = await axios.post(`${API_URL}activities`, formData, {
         headers: {

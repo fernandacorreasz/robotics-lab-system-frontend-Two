@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Form, Input, Button, DatePicker, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { UploadChangeParam } from "antd/lib/upload";
+import { UploadFile } from "antd/lib/upload/interface";
 
 import { createActivity } from "../../../services/ActivityService";
 import moment from "moment";
@@ -48,17 +50,19 @@ const AddActivity: React.FC = () => {
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
       navigate("/laboratorist/activities"); // Redirecionar para a lista de atividades
-    } catch (error: any) {
-      message.error(error?.message || "Erro ao criar atividade. Tente novamente.");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error: unknown) {
+      message.error( "Erro ao criar atividade. Tente novamente.");
     }
   };
 
-  const handleFileChange = (info: any) => {
-    const uploadedFile = info.file.originFileObj;
+  const handleFileChange = (info: UploadChangeParam<UploadFile<unknown>>) => {
+    const uploadedFile = info.file.originFileObj as File;
     if (uploadedFile) {
       setFile(uploadedFile);
     }
   };
+
   return (
     <Card title="Adicionar Nova Atividade">
       <Form form={form} layout="vertical" onFinish={handleAdd}>

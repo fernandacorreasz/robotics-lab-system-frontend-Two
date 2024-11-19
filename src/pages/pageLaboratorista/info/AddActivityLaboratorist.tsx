@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Form, Input, Button, DatePicker, Upload, Select, message } from "antd";
+import { Card, Form, Input, Button, DatePicker, Upload, Select, message, UploadFile } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { createActivity } from "../../../services/ActivityService";
+import { UploadChangeParam } from "antd/lib/upload/interface";
 
 const { Option } = Select;
 
@@ -47,13 +48,17 @@ const AddActivityLaboratorist: React.FC = () => {
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
       navigate("/laboratorist/activities"); // Redirecionar para a lista de atividades
-    } catch (error: any) {
-      message.error(error?.message || "Erro ao criar atividade. Tente novamente.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message || "Erro ao criar atividade. Tente novamente.");
+      } else {
+        message.error("Erro desconhecido ao criar atividade.");
+      }
     }
   };
 
-  const handleFileChange = (info: any) => {
-    const uploadedFile = info.file.originFileObj;
+  const handleFileChange = (info: UploadChangeParam<UploadFile<unknown>>) => {
+    const uploadedFile = info.file.originFileObj as File;
     if (uploadedFile) {
       setFile(uploadedFile);
     }
@@ -102,10 +107,7 @@ const AddActivityLaboratorist: React.FC = () => {
         >
           <DatePicker showTime placeholder="Selecione a data e horário de início" />
         </Form.Item>
-        <Form.Item
-          name="endDate"
-          label="Data de Término (Opcional)"
-        >
+        <Form.Item name="endDate" label="Data de Término (Opcional)">
           <DatePicker showTime placeholder="Selecione a data e horário de término (se aplicável)" />
           <p style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>
             Deixe em branco se a atividade não possuir data de término definida.

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { LoginData, loginUser } from '../../services/LoginService';
+import React, { useState } from "react";
+import { Form, Input, Button, message, Row, Col } from "antd";
+import { useNavigate } from "react-router-dom";
+import { LoginData, loginUser } from "../../services/LoginService";
+import logo from "../../assets/logo.png"; 
+import illustration from "../../assets/il.png"; 
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -11,55 +13,123 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await loginUser(values);
-
-      message.success('Login realizado com sucesso');
-      
-      // Redirecionar com base no nível de permissão
+      message.success("Login realizado com sucesso");
       if (response.permissionLevel === 3) {
-        navigate('/admin');
+        navigate("/admin");
       } else if (response.permissionLevel === 2) {
-        navigate('/laboratorist');
+        navigate("/laboratorist");
       } else if (response.permissionLevel === 1) {
-        navigate('/student');
+        navigate("/student");
       } else {
-        navigate('/unauthorized');
+        navigate("/unauthorized");
       }
     } catch (error) {
-        if (error instanceof Error) {
-          throw new Error(error.message || 'Erro desconhecido');
-        } else {
-          throw new Error('Ocorreu um erro inesperado');
-        }
+      if (error instanceof Error) {
+        message.error(error.message || "Erro ao realizar login. Por favor, tente novamente.");
+      } else {
+        message.error("Erro desconhecido ao realizar login.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto', padding: '40px' }}>
-      <h2>Login</h2>
-      <Form name="login" initialValues={{ remember: true }} onFinish={onFinish}>
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: 'Por favor, insira seu email!' }]}
+    <Row style={{ height: "100vh" }}>
+      <Col
+        xs={24}
+        md={12}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ffffff",
+          padding: "40px",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "400px",
+            padding: "40px",
+            borderRadius: "8px",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Box-shadow adicionado
+            backgroundColor: "white",
+          }}
         >
-          <Input placeholder="Email" />
-        </Form.Item>
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <img src={logo} alt="Logo" style={{ width: "150px" }} />
+          
+          </div>
+          <Form
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            style={{ width: "100%" }}
+          >
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: "Por favor, insira seu email!" }]}
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
 
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Por favor, insira sua senha!' }]}
-        >
-          <Input.Password placeholder="Senha" />
-        </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: "Por favor, insira sua senha!" }]}
+            >
+              <Input.Password placeholder="Senha" />
+            </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Entrar
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+            <div style={{ marginBottom: "10px", fontSize: "14px" }}>
+              <a href="/forgot-password" style={{ color: "#4B0082" }}>
+                Esqueceu sua senha? Clique aqui
+              </a>
+            </div>
+            <div style={{ marginBottom: "20px", fontSize: "14px" }}>
+              <a href="/register" style={{ color: "#4B0082" }}>
+                Não tem uma conta? Clique aqui para Cadastrar
+              </a>
+            </div>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#4B0082",
+                  borderColor: "#4B0082",
+                }}
+              >
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </Col>
+
+      <Col
+        xs={0}
+        md={12}
+        style={{
+          backgroundColor: "#4B0082",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <img
+          src={illustration}
+          alt="Ilustração"
+          style={{
+            maxWidth: "80%",
+            maxHeight: "80%",
+            objectFit: "contain",
+          }}
+        />
+      </Col>
+    </Row>
   );
 };
 
