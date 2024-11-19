@@ -14,7 +14,7 @@ https://github.com/user-attachments/assets/9fea6bcc-2783-4c7b-9e71-77122846638d
 
 ## Acesso à aplicação
 
-- **Frontend em execução:** [http://localhost:5173/](http://localhost:5173/)
+- **Frontend em execução:** [http://4.196.97.77:5173/](http://4.196.97.77:5173/)
 - **Documentação da API:** [http://4.196.97.77:9002/swagger-ui/index.html#/](http://4.196.97.77:9002/swagger-ui/index.html#/)
 
 ---
