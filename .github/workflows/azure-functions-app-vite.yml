@@ -39,9 +39,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Análise com o SonarQube
+     # Análise com o SonarQube
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@main
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -53,7 +53,7 @@ jobs:
 
       # Verificação do Quality Gate (Opcional)
       - name: Check SonarQube Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@@main
+        uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
