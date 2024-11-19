@@ -67,5 +67,23 @@ O módulo do estudante fornece acesso às ferramentas necessárias para seus pro
 - **Solicitar Certificado:** Envio de pedidos de certificados ao administrador.
 
 ---
+## Diagrama de Casos de Uso
 
-## Como Contribuir
+Abaixo está um diagrama básico representando os principais casos de uso do sistema. Ele destaca as interações dos três perfis de usuários: Administrador, Laboratorista e Estudante.
+
+
+---
+
+## Documentação
+
+A documentação detalhada da aplicação pode ser acessada pelos seguintes meios
+
+---
+
+## Vídeo Explicativo
+
+Um vídeo demonstrativo está sendo preparado para explicar as funcionalidades da aplicação. Assim que finalizado, será disponibilizado neste repositório.
+
+
+
+
