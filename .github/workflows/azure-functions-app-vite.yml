@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
       - name: Build
         run: npm run build
 
-   # Análise com o SonarQube
+      # Análise com o SonarQube
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
@@ -49,11 +49,9 @@ jobs:
           args: >
             -Dsonar.projectKey=robotics-lab-system-frontend-Two
             -Dsonar.sources=src
-            -Dsonar.language=TypeScript
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.typescript.tsconfigPath=tsconfig.json
 
-      # Essa etapa garante que a análise deve passar no Quality Gate antes de prosseguir
+      # Verificação do Quality Gate (Opcional)
       - name: Check SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
