@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LogoutOutlined,
   DashboardOutlined,
@@ -12,6 +12,7 @@ import {
 
 const StudentSidebar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -19,11 +20,16 @@ const StudentSidebar: React.FC = () => {
     navigate('/');
   };
 
+
+  const selectedKey = location.pathname.includes('/student/forum/')
+    ? 'forum' 
+    : location.pathname.split('/')[2];
+
   return (
     <Menu
       mode="inline"
-      defaultSelectedKeys={['dashboard']}
-      style={{ height: '100%', borderRight: 0, textAlign: 'left' }} 
+      selectedKeys={[selectedKey]} // Garante que o item correto esteja selecionado
+      style={{ height: '100%', borderRight: 0, textAlign: 'left' }}
     >
       <Menu.Item
         key="logout"

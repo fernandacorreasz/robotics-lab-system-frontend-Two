@@ -22,13 +22,13 @@ import ComponentsLibraryStudent from "../pages/pageStudent/ComponentsLibraryStud
 import NotificationsStudent from "../pages/pageStudent/NotificationsStudent";
 import ForumStudent from "../pages/pageStudent/ForumStudent";
 import RequestCertificateStudent from "../pages/pageStudent/RequestCertificateStudent";
-import PostDetails from "../components/Forum/PostDetails";
 import ViewActivity from "../pages/pageStudent/info/ViewActivity";
 import AddActivity from "../pages/pageStudent/info/AddActivity";
 import BulkAddComponentsPage from "../pages/pageLaboratorista/info/BulkAddComponentsPage";
 import AddActivityLaboratorist from "../pages/pageLaboratorista/info/AddActivityLaboratorist";
 import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; 
 import ComponentDetailsStudent from "../pages/pageStudent/loan/ComponentDetailsStudent";
+import PostDetails from "../pages/pageStudent/info/PostDetails";
 
 const AppRoutes: React.FC = () => {
   return (

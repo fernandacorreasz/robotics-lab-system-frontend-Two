@@ -49,7 +49,7 @@ const AddActivity: React.FC = () => {
       // Enviar para o backend
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
-      navigate("/laboratorist/activities"); // Redirecionar para a lista de atividades
+      navigate("/student/activities"); 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
       message.error( "Erro ao criar atividade. Tente novamente.");
