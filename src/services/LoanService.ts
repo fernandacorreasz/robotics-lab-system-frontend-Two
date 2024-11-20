@@ -68,9 +68,9 @@ export const requestLoan = async (loanData: {
       }
     }
   };
-  
+
   // Serviço atualizado para listar componentes com detalhes
-export const fetchComponents = async (page = 0, size = 10) => {
+export const fetchComponentsLoad = async (page = 0, size = 10) => {
     try {
       const response = await axios.get(`${API_URL}loans/details`, {
         params: { page, size },
@@ -84,6 +84,23 @@ export const fetchComponents = async (page = 0, size = 10) => {
         throw new Error(error.response?.data || 'Erro ao buscar componentes');
       } else {
         throw new Error('Erro inesperado ao buscar componentes');
+      }
+    }
+  };
+  
+  export const fetchComponentDetails = async (id: string) => {
+    try {
+      const response = await axios.get(`${API_URL}components/${id}/with-associations`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data || "Erro ao buscar detalhes do componente");
+      } else {
+        throw new Error("Erro inesperado ao buscar detalhes do componente");
       }
     }
   };

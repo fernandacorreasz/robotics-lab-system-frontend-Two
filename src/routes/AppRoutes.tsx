@@ -24,13 +24,13 @@ import ComponentsLibraryStudent from "../pages/pageStudent/ComponentsLibraryStud
 import NotificationsStudent from "../pages/pageStudent/NotificationsStudent";
 import ForumStudent from "../pages/pageStudent/ForumStudent";
 import RequestCertificateStudent from "../pages/pageStudent/RequestCertificateStudent";
-import ComponentDetails from "../components/ElectronicComponentsinventory/ComponentDetailsStudent";
 import PostDetails from "../components/Forum/PostDetails";
 import ViewActivity from "../pages/pageStudent/info/ViewActivity";
 import AddActivity from "../pages/pageStudent/info/AddActivity";
 import BulkAddComponentsPage from "../pages/pageLaboratorista/info/BulkAddComponentsPage";
 import AddActivityLaboratorist from "../pages/pageLaboratorista/info/AddActivityLaboratorist";
-import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; // Import your new component
+import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; 
+import ComponentDetailsStudent from "../pages/pageStudent/loan/ComponentDetailsStudent";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -66,14 +66,24 @@ const AppRoutes: React.FC = () => {
           </PrivateRoute>
         }
       >
-        <Route path="manage-stock/bulk-add" element={<BulkAddComponentsPage />} />
+        <Route
+          path="manage-stock/bulk-add"
+          element={<BulkAddComponentsPage />}
+        />
         <Route path="dashboard" element={<DashboardLaboratorist />} />
         <Route
           path="manage-activities"
           element={<ManageActivitiesLaboratorist />}
         />
-        <Route path="manage-activities/add" element={<AddActivityLaboratorist />} />
-        <Route path="manage-activities/view/:activityId" element={<ViewActivityLaboratorist />} /> {/* New Route */}
+        <Route
+          path="manage-activities/add"
+          element={<AddActivityLaboratorist />}
+        />
+        <Route
+          path="manage-activities/view/:activityId"
+          element={<ViewActivityLaboratorist />}
+        />{" "}
+        {/* New Route */}
         <Route path="notifications" element={<NotificationsLaboratorist />} />
         <Route path="manage-stock" element={<ManageStockLaboratorist />} />
         <Route path="manage-loans" element={<ManageLoansLaboratorist />} />
@@ -97,8 +107,12 @@ const AppRoutes: React.FC = () => {
         <Route
           path="components-library"
           element={<ComponentsLibraryStudent />}
-        />
-        <Route path="components-library/:name" element={<ComponentDetails />} />
+        /><Route
+        path="components-library/:id"
+        element={<ComponentDetailsStudent />}
+      />
+      
+
         <Route path="notifications" element={<NotificationsStudent />} />
         <Route path="forum" element={<ForumStudent />} />
         <Route path="forum/:postId" element={<PostDetails />} />
