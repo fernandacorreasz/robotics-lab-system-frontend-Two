@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Form, Input, Button, message, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LoginData, loginUser } from "../../services/LoginService";
-import logo from "../../assets/logo.png"; 
-import illustration from "../../assets/il.png"; 
+import logo from "../../assets/logo.png";
+import illustration from "../../assets/il.png";
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -12,6 +12,8 @@ const LoginPage: React.FC = () => {
   const onFinish = async (values: LoginData) => {
     setLoading(true);
     try {
+      localStorage.setItem("email", values.email);
+
       const response = await loginUser(values);
       message.success("Login realizado com sucesso");
       if (response.permissionLevel === 3) {
@@ -54,13 +56,12 @@ const LoginPage: React.FC = () => {
             maxWidth: "400px",
             padding: "40px",
             borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Box-shadow adicionado
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             backgroundColor: "white",
           }}
         >
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <img src={logo} alt="Logo" style={{ width: "150px" }} />
-          
           </div>
           <Form
             initialValues={{ remember: true }}
@@ -103,6 +104,7 @@ const LoginPage: React.FC = () => {
                   borderColor: "#4B0082",
                 }}
               >
+                Entrar
               </Button>
             </Form.Item>
           </Form>
