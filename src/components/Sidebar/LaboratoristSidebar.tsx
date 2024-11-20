@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogoutOutlined, DashboardOutlined, UserOutlined, BellOutlined, StockOutlined, FileTextOutlined, MessageOutlined } from '@ant-design/icons';
+import { LogoutOutlined, DashboardOutlined, StockOutlined, FileTextOutlined, MessageOutlined } from '@ant-design/icons';
 
 const LaboratoristSidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -35,12 +35,6 @@ const LaboratoristSidebar: React.FC = () => {
       </Menu.Item>
       <Menu.Item key="forum" icon={<MessageOutlined />}>
         <Link to="/laboratorist/forum">Fórum</Link>
-      </Menu.Item>
-      <Menu.Item key="manage-users" icon={<UserOutlined />}>
-        <Link to="/laboratorist/manage-users">Gerenciar Usuários</Link>
-      </Menu.Item>
-      <Menu.Item key="notifications" icon={<BellOutlined />}>
-        <Link to="/laboratorist/notifications">Notificações de Alunos</Link>
       </Menu.Item>
     </Menu>
   );

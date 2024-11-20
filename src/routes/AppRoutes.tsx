@@ -13,11 +13,9 @@ import ForumSACAdmin from "../pages/pageAdmin/ForumSACAdmin";
 import ProfileSettingsAdmin from "../pages/pageAdmin/ProfileSettingsAdmin";
 import DashboardLaboratorist from "../pages/pageLaboratorista/DashboardLaboratorist";
 import ManageActivitiesLaboratorist from "../pages/pageLaboratorista/ManageActivitiesLaboratorist";
-import NotificationsLaboratorist from "../pages/pageLaboratorista/NotificationsLaboratorist";
 import ManageStockLaboratorist from "../pages/pageLaboratorista/ManageStockLaboratorist";
 import ManageLoansLaboratorist from "../pages/pageLaboratorista/ManageLoansLaboratorist";
 import ForumLaboratorist from "../pages/pageLaboratorista/ForumLaboratorist";
-import ManageUsersLaboratorist from "../pages/pageLaboratorista/ManageUsersLaboratorist";
 import DashboardStudent from "../pages/pageStudent/DashboardStudent";
 import ActivitiesStudent from "../pages/pageStudent/ActivitiesStudent";
 import ComponentsLibraryStudent from "../pages/pageStudent/ComponentsLibraryStudent";
@@ -83,15 +81,10 @@ const AppRoutes: React.FC = () => {
           path="manage-activities/view/:activityId"
           element={<ViewActivityLaboratorist />}
         />{" "}
-        {/* New Route */}
-        <Route path="notifications" element={<NotificationsLaboratorist />} />
         <Route path="manage-stock" element={<ManageStockLaboratorist />} />
         <Route path="manage-loans" element={<ManageLoansLaboratorist />} />
         <Route path="forum" element={<ForumLaboratorist />} />
-        <Route path="manage-users" element={<ManageUsersLaboratorist />} />
       </Route>
-
-      {/* Student Routes */}
       <Route
         path="/student"
         element={

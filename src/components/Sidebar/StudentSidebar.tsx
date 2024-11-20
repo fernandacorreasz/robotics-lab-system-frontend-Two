@@ -5,7 +5,6 @@ import {
   LogoutOutlined,
   DashboardOutlined,
   FileTextOutlined,
-  BellOutlined,
   BookOutlined,
   MessageOutlined,
   TrophyOutlined,
@@ -42,9 +41,6 @@ const StudentSidebar: React.FC = () => {
       </Menu.Item>
       <Menu.Item key="components-library" icon={<BookOutlined />} style={{ textAlign: 'left' }}>
         <Link to="/student/components-library">Biblioteca de Componentes</Link>
-      </Menu.Item>
-      <Menu.Item key="notifications" icon={<BellOutlined />} style={{ textAlign: 'left' }}>
-        <Link to="/student/notifications">Notificações</Link>
       </Menu.Item>
       <Menu.Item key="forum" icon={<MessageOutlined />} style={{ textAlign: 'left' }}>
         <Link to="/student/forum">Fórum</Link>
