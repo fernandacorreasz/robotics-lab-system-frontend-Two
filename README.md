@@ -60,14 +60,13 @@ O módulo do laboratorista é focado no gerenciamento prático do laboratório:
 - **Gerenciar Empréstimos:** Controle de empréstimos de equipamentos.
 - **Fórum:** Comunicação com estudantes e administradores.
 - **Gerenciar Usuários:** Gestão de usuários vinculados ao laboratório.
-- **Notificações de Alunos:** Visualização de notificações e demandas enviadas pelos estudantes.
+
 
 ### **3. Módulo Estudante**
 O módulo do estudante fornece acesso às ferramentas necessárias para seus projetos e aprendizado:
 - **Dashboard:** Visão geral de notificações, atividades e progresso.
 - **Atividades:** Consulta e gerenciamento das atividades atribuídas.
 - **Biblioteca de Componentes:** Visualização dos componentes disponíveis no laboratório.
-- **Notificações:** Acompanhamento de mensagens enviadas pelo laboratorista ou administrador.
 - **Fórum:** Comunicação com laboratoristas e outros estudantes.
 - **Solicitar Certificado:** Envio de pedidos de certificados ao administrador.
 
