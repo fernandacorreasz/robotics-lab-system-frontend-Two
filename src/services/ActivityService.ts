@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Activity } from '../models/Activity';
 import { ActivityView } from '../models/ActivityView';
+import { ActivityUpdatePayload } from '../models/ActivityUpdatePayload';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -129,6 +130,55 @@ export const fetchActivityPhoto = async (activityId: string): Promise<string> =>
         throw new Error(error.response?.data || "Erro ao criar atividade");
       } else {
         throw new Error("Ocorreu um erro inesperado ao criar atividade");
+      }
+    }
+  };
+  
+  export const deleteActivities = async (ids: string[]): Promise<void> => {
+    try {
+      const response = await axios.delete(`${API_URL}activities/delete`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        data: ids, // Envia o array de IDs no body da requisição
+      });
+  
+      if (response.status !== 200) {
+        throw new Error("Erro ao deletar atividades");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data || "Erro ao deletar atividades");
+      } else {
+        throw new Error("Erro desconhecido ao deletar atividades");
+      }
+    }
+  };
+  export const updateActivity = async (
+    activityId: string,
+    updates: ActivityUpdatePayload
+  ): Promise<void> => {
+    try {
+      const response = await axios.patch(
+        `${API_URL}activities/${activityId}`,
+        updates,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status !== 200 && response.status !== 204) {
+        throw new Error("Erro ao atualizar a atividade");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data || "Erro ao atualizar a atividade");
+      } else {
+        throw new Error("Erro desconhecido ao atualizar a atividade");
       }
     }
   };

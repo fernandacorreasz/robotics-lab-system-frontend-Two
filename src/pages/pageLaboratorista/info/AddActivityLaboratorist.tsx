@@ -1,10 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Form, Input, Button, DatePicker, Upload, Select, message, UploadFile } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Upload,
+  Select,
+  Modal,
+  Table,
+  message,
+  UploadFile,
+  Spin,
+} from "antd";
+import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { createActivity } from "../../../services/ActivityService";
-import { UploadChangeParam } from "antd/lib/upload/interface";
+import { fetchComponents } from "../../../services/ComponentService";
+import type { TablePaginationConfig } from "antd/es/table";
 
 const { Option } = Select;
 
@@ -14,55 +28,126 @@ interface FormValues {
   activityStatus: string;
   timeSpent: number;
   startDate: moment.Moment;
-  endDate?: moment.Moment;
+}
+
+interface Component {
+  id: string;
+  name: string;
+  description: string;
 }
 
 const AddActivityLaboratorist: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [file, setFile] = useState<File | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [components, setComponents] = useState<Component[]>([]);
+  const [selectedComponents, setSelectedComponents] = useState<Component[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [componentPagination, setComponentPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
   const handleAdd = async (values: FormValues) => {
     try {
-      // Montar os dados da atividade
+      setIsSubmitting(true);
       const activityData = {
-        activityTitle: values.activityTitle,
-        activityDescription: values.activityDescription,
-        activityStatus: values.activityStatus,
+        ...values,
         timeSpent: values.timeSpent * 60,
         startDate: values.startDate.toISOString(),
-        endDate: values.endDate ? values.endDate.toISOString() : undefined,
         user: {
           id: localStorage.getItem("userId") || "",
         },
+        componentsUsed: selectedComponents.map((comp) => ({ id: comp.id })),
       };
 
-      // Criar FormData e anexar os dados e o arquivo
       const formData = new FormData();
       formData.append("activity", JSON.stringify(activityData));
-      if (file) {
-        formData.append("files", file);
-      }
+      fileList.forEach((file) => {
+        if (file.originFileObj) {
+          formData.append("files", file.originFileObj);
+        }
+      });
 
-      // Enviar para o backend
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
-      navigate("/laboratorist/activities"); // Redirecionar para a lista de atividades
+      navigate("/laboratorist/manage-activities");
     } catch (error: unknown) {
       if (error instanceof Error) {
         message.error(error.message || "Erro ao criar atividade. Tente novamente.");
       } else {
         message.error("Erro desconhecido ao criar atividade.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleFileChange = (info: UploadChangeParam<UploadFile<unknown>>) => {
-    const uploadedFile = info.file.originFileObj as File;
-    if (uploadedFile) {
-      setFile(uploadedFile);
+  const handleFileChange = ({ fileList }: { fileList: UploadFile[] }) => {
+    setFileList(fileList);
+  };
+
+  const handleOpenModal = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchComponents(componentPagination.current - 1, componentPagination.pageSize);
+      setComponents(data.content);
+      setComponentPagination((prev) => ({
+        ...prev,
+        total: data.totalElements,
+      }));
+    } catch {
+      message.error("Erro ao carregar componentes.");
+    } finally {
+      setLoading(false);
+      setIsModalVisible(true);
     }
   };
+
+  const handleComponentSelection = (selectedRowKeys: React.Key[], selectedRows: Component[]) => {
+    setSelectedComponents(selectedRows);
+  };
+
+  const handleModalOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleTableChange = async (pagination: TablePaginationConfig) => {
+    try {
+      setLoading(true);
+      const data = await fetchComponents((pagination.current || 1) - 1, pagination.pageSize || 10);
+      setComponents(data.content);
+      setComponentPagination({
+        current: pagination.current || 1,
+        pageSize: pagination.pageSize || 10,
+        total: data.totalElements,
+      });
+    } catch {
+      message.error("Erro ao carregar componentes.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const componentColumns = [
+    {
+      title: "Nome",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Descrição",
+      dataIndex: "description",
+      key: "description",
+    },
+  ];
 
   return (
     <Card title="Adicionar Nova Atividade - Laboratorista">
@@ -107,28 +192,62 @@ const AddActivityLaboratorist: React.FC = () => {
         >
           <DatePicker showTime placeholder="Selecione a data e horário de início" />
         </Form.Item>
-        <Form.Item name="endDate" label="Data de Término (Opcional)">
-          <DatePicker showTime placeholder="Selecione a data e horário de término (se aplicável)" />
-          <p style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>
-            Deixe em branco se a atividade não possuir data de término definida.
+        <Form.Item label="Componentes Relacionados (Opcional)">
+          <Button type="dashed" onClick={handleOpenModal} icon={<EyeOutlined />}>
+            Selecionar Componentes
+          </Button>
+          <p>
+            {selectedComponents.length} componente(s) selecionado(s)
           </p>
         </Form.Item>
         <Form.Item label="Imagem (Opcional)">
           <Upload
             beforeUpload={() => false}
             onChange={handleFileChange}
-            maxCount={1}
-            accept="image/png, image/jpeg"
+            multiple
+            fileList={fileList}
+            accept="image/png, image/jpeg, image/gif"
           >
             <Button icon={<UploadOutlined />}>Selecionar Imagem</Button>
           </Upload>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-            Adicionar Atividade
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={isSubmitting}>
+            {isSubmitting ? "Registrando..." : "Adicionar Atividade"}
           </Button>
         </Form.Item>
       </Form>
+
+      {/* Modal para seleção de componentes */}
+      <Modal
+        title="Selecionar Componentes"
+        visible={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
+        width={800}
+        okText="Confirmar Seleção"
+        cancelText="Cancelar"
+      >
+        {loading ? (
+          <Spin size="large" />
+        ) : (
+          <Table
+            rowSelection={{
+              type: "checkbox",
+              onChange: handleComponentSelection,
+            }}
+            dataSource={components}
+            columns={componentColumns}
+            pagination={{
+              current: componentPagination.current,
+              pageSize: componentPagination.pageSize,
+              total: componentPagination.total,
+            }}
+            rowKey="id"
+            onChange={handleTableChange}
+          />
+        )}
+      </Modal>
     </Card>
   );
 };

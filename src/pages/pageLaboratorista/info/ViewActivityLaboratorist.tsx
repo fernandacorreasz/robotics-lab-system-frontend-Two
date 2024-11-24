@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Form, Input, message, Upload, Switch, Button } from "antd";
+import {
+  Card,
+  Form,
+  Input,
+  message,
+  Upload,
+  Switch,
+  Button,
+  DatePicker,
+  Row,
+  Tag,
+} from "antd";
 import { UploadOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import {
   fetchActivityWithCommentsById,
   fetchActivityPhoto,
   addCommentToActivity,
+  updateActivity,
 } from "../../../services/ActivityService";
 import { ActivityView } from "../../../models/ActivityView";
 import StatusTag from "../../../components/StatusDropdown/StatusTag";
 import CustomButton from "../../../components/Common/CustomButton";
 import CommentList from "../../pageStudent/info/CommentsList";
 import PomodoroTimer from "../../pageStudent/info/PomodoroTimer";
+import moment from "moment";
+import { ActivityUpdatePayload } from "../../../models/ActivityUpdatePayload";
 
 const ViewActivityLaboratorist: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
@@ -22,7 +36,7 @@ const ViewActivityLaboratorist: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isPomodoroVisible, setIsPomodoroVisible] = useState(false);
-
+  const [form] = Form.useForm();
   useEffect(() => {
     if (activityId) {
       setLoading(true);
@@ -34,11 +48,40 @@ const ViewActivityLaboratorist: React.FC = () => {
     }
   }, [activityId]);
 
-  const onFinish = (values: Partial<ActivityView>) => {
-    console.log("Form values:", values);
-    setPhotoUrl(tempPhotoUrl);
-    message.success("Atividade atualizada com sucesso!");
+  const onFinish = async (values: Partial<ActivityView>) => {
+    if (!activityId || !activity) return;
+
+    const updates: ActivityUpdatePayload = {
+      activityTitle: values.activityTitle || activity.activityTitle,
+      activityDescription: values.activityDescription || activity.activityDescription,
+      activityStatus: values.activityStatus || activity.activityStatus,
+      timeSpent: values.timeSpent || 0,
+      endDate: values.endDate ? moment(values.endDate).valueOf() : null,
+    };
+
+    try {
+      await updateActivity(activityId, updates);
+      message.success("Atividade atualizada com sucesso!");
+
+      setActivity((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          ...updates,
+          endDate: updates.endDate ? new Date(updates.endDate).toISOString() : null,
+        };
+      });
+
+      setIsEditing(false);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message || "Erro ao atualizar atividade");
+      } else {
+        message.error("Erro desconhecido ao atualizar atividade");
+      }
+    }
   };
+  
 
   const handleImageUpload = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -132,7 +175,7 @@ const ViewActivityLaboratorist: React.FC = () => {
 
   return (
     <>
-      <Card title="Atividade - Laboratorista">
+   <Card title="Atividade - Laboratorista">
         <div
           style={{
             marginBottom: "20px",
@@ -164,15 +207,15 @@ const ViewActivityLaboratorist: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-          <Form
+        <Form
+            form={form}
             layout="vertical"
             initialValues={{
               activityTitle: activity.activityTitle,
               activityDescription: activity.activityDescription,
               activityStatus: activity.activityStatus,
-              timeSpent: activity.timeSpent,
-              startDate: activity.startDate,
-              endDate: activity.endDate,
+              timeSpent: activity.timeSpent || 0,
+              endDate: activity.endDate ? moment(activity.endDate) : null,
             }}
             onFinish={onFinish}
             style={{ flex: 1 }}
@@ -188,8 +231,8 @@ const ViewActivityLaboratorist: React.FC = () => {
                 status={activity.activityStatus}
                 editable={isEditing}
                 onChange={(newStatus) =>
-                  setActivity(
-                    (prev) => prev && { ...prev, activityStatus: newStatus }
+                  setActivity((prev) =>
+                    prev ? { ...prev, activityStatus: newStatus } : prev
                   )
                 }
               />
@@ -197,15 +240,14 @@ const ViewActivityLaboratorist: React.FC = () => {
             <Form.Item label="Tempo Investido (minutos)" name="timeSpent">
               <Input type="number" disabled={!isEditing} />
             </Form.Item>
-            <Form.Item label="Data Inicial" name="startDate">
-              <Input type="date" disabled={!isEditing} />
-            </Form.Item>
             <Form.Item label="Data Final" name="endDate">
-              <Input type="date" disabled={!isEditing} />
+              <DatePicker
+                format="YYYY-MM-DD HH:mm"
+                showTime
+                disabled={!isEditing}
+                style={{ width: "100%" }}
+              />
             </Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!isEditing}>
-              Salvar Alterações
-            </Button>
           </Form>
 
           <div
@@ -220,7 +262,7 @@ const ViewActivityLaboratorist: React.FC = () => {
           >
             {tempPhotoUrl || photoUrl ? (
               <img
-                src={tempPhotoUrl || photoUrl || undefined} 
+                src={tempPhotoUrl || photoUrl || undefined}
                 alt="Foto da Atividade"
                 style={{
                   width: "100%",
@@ -263,8 +305,32 @@ const ViewActivityLaboratorist: React.FC = () => {
             </Upload>
           </div>
         </div>
+        <div style={{ marginTop: "20px" }}>
+          <strong>Componentes Utilizados:</strong>
+          <div style={{ marginTop: "10px" }}>
+            {activity.componentsUsed.length > 0 ? (
+              activity.componentsUsed.map((component) => (
+                <Tag key={component.id} color="blue">
+                  {component.name}
+                </Tag>
+              ))
+            ) : (
+              <p>Nenhum componente associado a esta atividade.</p>
+            )}
+          </div>
+        </div>
         <PomodoroTimer visible={isPomodoroVisible} onClose={closePomodoro} />
+        <Row justify="end" style={{ marginTop: "20px" }}>
+        <Button
+          type="primary"
+          onClick={() => form.submit()}
+          disabled={!isEditing}
+        >
+          Salvar Alterações
+        </Button>
+      </Row>
       </Card>
+
 
       <Card
         title="Anotações sobre essa atividade"
@@ -281,8 +347,9 @@ const ViewActivityLaboratorist: React.FC = () => {
           placeholder="Digite seu comentário (máximo 120 caracteres)"
           maxLength={120}
           rows={2}
-          style={{ marginTop: "20px", borderColor: "#8e44ad" }}
+          style={{ marginTop: "20px", borderColor: "#8e44ad", marginBottom: "20px" }}
         />
+        <Row justify="end">
         <CustomButton
           text="Comentar"
           onClick={handleAddComment}
@@ -291,7 +358,7 @@ const ViewActivityLaboratorist: React.FC = () => {
             backgroundColor: "#8e44ad",
             borderColor: "#8e44ad",
           }}
-        />
+        /></Row>
       </Card>
     </>
   );

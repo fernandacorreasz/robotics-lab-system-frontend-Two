@@ -10,7 +10,7 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Activity } from "../../models/Activity";
-import { fetchActivitiesByUserId } from "../../services/ActivityService";
+import { deleteActivities, fetchActivitiesByUserId } from "../../services/ActivityService";
 import moment from "moment";
 import { statusColors, statusLabels, columnHeaderStyles } from "../../styles/statusStyles";
 import FilterSection from "../pageStudent/info/FilterSection";
@@ -36,6 +36,21 @@ const ActivitiesLaboratorist: React.FC = () => {
       message.error("Usuário não identificado.");
     }
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteActivities([id]);
+      message.success("Atividade excluída com sucesso!");
+      setActivities((prev) => prev.filter((activity) => activity.id !== id));
+      setFilteredActivities((prev) => prev.filter((activity) => activity.id !== id));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message || "Erro ao excluir atividade.");
+      } else {
+        message.error("Erro desconhecido ao excluir atividade.");
+      }
+    }
+  };
 
   const applyFilter = () => {
     const filtered = activities.filter((activity) => {
@@ -107,7 +122,7 @@ const ActivitiesLaboratorist: React.FC = () => {
                 boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
               }}
               actions={[
-                <DeleteOutlined onClick={() => console.log("Excluir", activity)} style={{ color: "#f5222d" }} />,
+                <DeleteOutlined  onClick={() => handleDelete(activity.id)} style={{ color: "#f5222d" }} />,
                 <Link to={`/laboratorist/manage-activities/view/${activity.id}`}>
                   <RightOutlined style={{ color: "#52c41a" }} />
                 </Link>,
