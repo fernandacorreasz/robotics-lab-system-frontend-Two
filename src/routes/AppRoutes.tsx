@@ -84,6 +84,10 @@ const AppRoutes: React.FC = () => {
         />{" "}
         <Route path="manage-stock" element={<ManageStockLaboratorist />} />
         <Route path="manage-loans" element={<ManageLoansLaboratorist />} />
+        <Route
+        path="manage-loans/:id"
+        element={<ComponentDetailsStudent />}
+      />
         <Route path="forum" element={<ForumLaboratorist />} />
         <Route path="forum/:postId" element={<PostDetails />} />
       </Route>

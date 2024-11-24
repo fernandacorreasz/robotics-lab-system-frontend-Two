@@ -11,13 +11,16 @@ import {
   Tooltip,
   message,
   Card,
+  Input,
+  Form,
 } from "antd";
-import { DownOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DownOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
   fetchComponents,
   filterComponents,
   deleteComponent,
+  updateComponent,
 } from "../../services/ComponentService";
 import CustomTable from "../../components/Common/CustomTable";
 import FilterComponent from "./info/FilterComponent";
@@ -41,6 +44,7 @@ const ManageStockLaboratorist: React.FC = () => {
   const [deleteSerialNumber, setDeleteSerialNumber] = useState<string | null>(
     null
   );
+  const [editComponent, setEditComponent] = useState<Component | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,6 +81,18 @@ const ManageStockLaboratorist: React.FC = () => {
     }
   };
 
+  const handleEditComponent = async (values: Partial<Component>) => {
+    if (!editComponent) return;
+    try {
+      await updateComponent(editComponent.id, values);
+      message.success("Componente atualizado com sucesso!");
+      setEditComponent(null);
+      loadComponents(currentPage - 1, pageSize);
+    }catch {
+      throw new Error('Erro ao  atualizar o componente.');
+    }
+  };
+
   const columns: ColumnsType<Component> = [
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Nome do Componente", dataIndex: "name", key: "name" },
@@ -97,14 +113,23 @@ const ManageStockLaboratorist: React.FC = () => {
       title: "Ações",
       key: "actions",
       render: (_: unknown, record: Component) => (
-        <Tooltip title="Deletar Componente">
-          <Button
-            type="link"
-            icon={<DeleteOutlined />}
-            danger
-            onClick={() => setDeleteSerialNumber(record.serialNumber)}
-          />
-        </Tooltip>
+        <Space>
+          <Tooltip title="Editar Componente">
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => setEditComponent(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Deletar Componente">
+            <Button
+              type="link"
+              icon={<DeleteOutlined />}
+              danger
+              onClick={() => setDeleteSerialNumber(record.serialNumber)}
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -149,10 +174,7 @@ const ManageStockLaboratorist: React.FC = () => {
             </h4>
             <p style={{ margin: 0, textAlign: "left" }}>
               Esta é a área principal para gerenciamento do estoque de
-              componentes no laboratório. Aqui você pode cadastrar, visualizar,
-              filtrar, e deletar componentes. Gerencie categorias, subcategorias
-              e utilize ferramentas de cadastro massivo para manter tudo
-              organizado!
+              componentes no laboratório.
             </p>
           </Col>
           <Col span={4}>
@@ -224,6 +246,69 @@ const ManageStockLaboratorist: React.FC = () => {
       >
         <p>Tem certeza que deseja deletar este componente?</p>
       </Modal>
+
+      {editComponent && (
+        <Modal
+          visible={!!editComponent}
+          title="Editar Componente"
+          onCancel={() => setEditComponent(null)}
+          onOk={() =>
+            handleEditComponent({
+              name: editComponent.name,
+              serialNumber: editComponent.serialNumber,
+              description: editComponent.description,
+              quantity: editComponent.quantity,
+            })
+          }
+          okText="Salvar"
+          cancelText="Cancelar"
+        >
+          <Form layout="vertical" initialValues={editComponent}>
+            <Form.Item label="Nome" name="name">
+              <Input
+                defaultValue={editComponent.name}
+                onChange={(e) =>
+                  setEditComponent({ ...editComponent, name: e.target.value })
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Número de Série" name="serialNumber">
+              <Input
+                defaultValue={editComponent.serialNumber}
+                onChange={(e) =>
+                  setEditComponent({
+                    ...editComponent,
+                    serialNumber: e.target.value,
+                  })
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Descrição" name="description">
+              <Input.TextArea
+                defaultValue={editComponent.description}
+                onChange={(e) =>
+                  setEditComponent({
+                    ...editComponent,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Quantidade" name="quantity">
+              <Input
+                type="number"
+                defaultValue={editComponent.quantity}
+                onChange={(e) =>
+                  setEditComponent({
+                    ...editComponent,
+                    quantity: parseInt(e.target.value, 10),
+                  })
+                }
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
+      )}
     </div>
   );
 };

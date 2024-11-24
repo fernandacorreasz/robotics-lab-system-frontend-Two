@@ -134,3 +134,19 @@ export const createCategory = async (categoryName: string): Promise<void> => {
       throw new Error('Erro ao deletar o componente.');
     }
   };
+
+  export const updateComponent = async (
+    id: string,
+    updates: Partial<Component>
+  ): Promise<void> => {
+    try {
+      await axios.put(`${API_URL}components/${id}`, updates, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch {
+      throw new Error('Erro ao  atualizar o componente.');
+    }
+  };
+  
