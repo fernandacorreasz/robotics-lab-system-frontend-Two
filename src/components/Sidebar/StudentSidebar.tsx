@@ -6,8 +6,7 @@ import {
   DashboardOutlined,
   FileTextOutlined,
   BookOutlined,
-  MessageOutlined,
-  TrophyOutlined,
+  MessageOutlined
 } from '@ant-design/icons';
 
 const StudentSidebar: React.FC = () => {
@@ -50,9 +49,6 @@ const StudentSidebar: React.FC = () => {
       </Menu.Item>
       <Menu.Item key="forum" icon={<MessageOutlined />} style={{ textAlign: 'left' }}>
         <Link to="/student/forum">Fórum</Link>
-      </Menu.Item>
-      <Menu.Item key="request-certificate" icon={<TrophyOutlined />} style={{ textAlign: 'left' }}>
-        <Link to="/student/request-certificate">Solicitar Certificado</Link>
       </Menu.Item>
     </Menu>
   );
