@@ -10,6 +10,9 @@ interface ComponentDetail {
   serialNumber: string;
   description: string;
   quantity: number;
+  tutorialLink?: string;
+  projectIdeas?: string;
+  librarySuggestions?: string;
   subCategoryName: string;
   categoryName: string;
 }
@@ -29,7 +32,6 @@ const ComponentDetailsStudent: React.FC = () => {
         setLoading(true);
         const data = await fetchComponentDetails(id!);
         setComponent(data);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         message.error("Erro ao carregar os detalhes do componente.");
       } finally {
@@ -39,6 +41,11 @@ const ComponentDetailsStudent: React.FC = () => {
 
     loadDetails();
   }, [id]);
+
+  const getYouTubeEmbedLink = (url: string): string => {
+    const videoId = url.split("v=")[1]?.split("&")[0] || url.split("/").pop();
+    return `https://www.youtube.com/embed/${videoId}`;
+  };
 
   if (loading) {
     return <Spin size="large" />;
@@ -105,103 +112,88 @@ const ComponentDetailsStudent: React.FC = () => {
       </Card>
 
       {/* Tutorial de Uso */}
-      <Card style={{ marginBottom: "20px", padding: "10px" }}>
-        <Row align="middle" justify="space-between">
-          <Col>
-            <h3 style={{ margin: 0, textAlign: "left" }}>
-              Acessar Tutorial de Uso
-            </h3>
-          </Col>
-          <Col>
-            <Button
-              type="link"
-              icon={isTutorialVisible ? <UpOutlined /> : <DownOutlined />}
-              onClick={() => setTutorialVisible(!isTutorialVisible)}
-            />
-          </Col>
-        </Row>
-        {isTutorialVisible && (
-          <div style={{ marginTop: "10px", textAlign: "left" }}>
-            <p>Veja abaixo o tutorial de uso do {component.name}:</p>
-            <div
-              style={{
-                position: "relative",
-                paddingBottom: "40%",
-                height: 0,
-                overflow: "hidden",
-                textAlign: "left",
-              }}
-            >
+      {component.tutorialLink && (
+        <Card style={{ marginBottom: "20px", padding: "10px" }}>
+          <Row align="middle" justify="space-between">
+            <Col>
+              <h3 style={{ margin: 0, textAlign: "left" }}>
+                Acessar Tutorial de Uso
+              </h3>
+            </Col>
+            <Col>
+              <Button
+                type="link"
+                icon={isTutorialVisible ? <UpOutlined /> : <DownOutlined />}
+                onClick={() => setTutorialVisible(!isTutorialVisible)}
+              />
+            </Col>
+          </Row>
+          {isTutorialVisible && (
+            <div style={{ marginTop: "10px", textAlign: "center" }}>
               <iframe
-                src="https://www.youtube.com/embed/K9RLf0Pvwq8"
-                title="Tutorial do Componente"
+                width="560"
+                height="315"
+                src={getYouTubeEmbedLink(component.tutorialLink)}
+                title="YouTube video player"
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "60%",
-                  height: "60%",
-                }}
               ></iframe>
             </div>
-          </div>
-        )}
-      </Card>
+          )}
+        </Card>
+      )}
 
       {/* Ideias de Projetos */}
-      <Card style={{ marginBottom: "20px", padding: "10px" }}>
-        <Row align="middle" justify="space-between">
-          <Col>
-            <h3 style={{ margin: 0, textAlign: "left" }}>
-              Acessar Ideias de Projetos
-            </h3>
-          </Col>
-          <Col>
-            <Button
-              type="link"
-              icon={isProjectsVisible ? <UpOutlined /> : <DownOutlined />}
-              onClick={() => setProjectsVisible(!isProjectsVisible)}
-            />
-          </Col>
-        </Row>
-        {isProjectsVisible && (
-          <div style={{ marginTop: "10px", textAlign: "left" }}>
-            <p>
-              Explore exemplos e ideias de projetos para aplicar o{" "}
-              {component.name} em atividades criativas e funcionais.
-            </p>
-          </div>
-        )}
-      </Card>
+      {component.projectIdeas && (
+        <Card style={{ marginBottom: "20px", padding: "10px" }}>
+          <Row align="middle" justify="space-between">
+            <Col>
+              <h3 style={{ margin: 0, textAlign: "left" }}>
+                Acessar Ideias de Projetos
+              </h3>
+            </Col>
+            <Col>
+              <Button
+                type="link"
+                icon={isProjectsVisible ? <UpOutlined /> : <DownOutlined />}
+                onClick={() => setProjectsVisible(!isProjectsVisible)}
+              />
+            </Col>
+          </Row>
+          {isProjectsVisible && (
+            <div style={{ marginTop: "10px", textAlign: "left" }}>
+              <p>{component.projectIdeas}</p>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Uso de Bibliotecas */}
-      <Card style={{ marginBottom: "20px", padding: "10px" }}>
-        <Row align="middle" justify="space-between">
-          <Col>
-            <h3 style={{ margin: 0, textAlign: "left" }}>
-              Acessar Uso de Bibliotecas
-            </h3>
-          </Col>
-          <Col>
-            <Button
-              type="link"
-              icon={isLibrariesVisible ? <UpOutlined /> : <DownOutlined />}
-              onClick={() => setLibrariesVisible(!isLibrariesVisible)}
-            />
-          </Col>
-        </Row>
-        {isLibrariesVisible && (
-          <div style={{ marginTop: "10px", textAlign: "left" }}>
-            <p>
-              Descubra bibliotecas compatíveis com o {component.name} e saiba
-              como utilizá-las em seus projetos.
-            </p>
-          </div>
-        )}
-      </Card>
+      {component.librarySuggestions && (
+        <Card style={{ marginBottom: "20px", padding: "10px" }}>
+          <Row align="middle" justify="space-between">
+            <Col>
+              <h3 style={{ margin: 0, textAlign: "left" }}>
+                Acessar Sugestões de Bibliotecas
+              </h3>
+            </Col>
+            <Col>
+              <Button
+                type="link"
+                icon={isLibrariesVisible ? <UpOutlined /> : <DownOutlined />}
+                onClick={() => setLibrariesVisible(!isLibrariesVisible)}
+              />
+            </Col>
+          </Row>
+          {isLibrariesVisible && (
+            <div style={{ marginTop: "10px", textAlign: "left" }}>
+              <p>{component.librarySuggestions}</p>
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 };

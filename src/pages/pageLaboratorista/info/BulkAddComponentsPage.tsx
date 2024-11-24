@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, InputNumber, Button, message, Row, Col, Cascader, Card } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { uploadComponentsJSON, fetchCategoriesWithSubcategories } from "../../../services/ComponentService";
+import {
+  Form,
+  Input,
+  InputNumber,
+  Button,
+  message,
+  Row,
+  Col,
+  Cascader,
+  Card,
+  Modal,
+} from "antd";
+import { PlusOutlined, DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  uploadComponentsJSON,
+  fetchCategoriesWithSubcategories,
+} from "../../../services/ComponentService";
 import { Category } from "../../../models/Category";
 import RoboticImage from "../../../assets/img/robotic.png";
 
@@ -10,6 +24,11 @@ const BulkAddComponentsPage: React.FC = () => {
   const [categories, setCategories] = useState<
     { value: string; label: string; children: { value: string; label: string }[] }[]
   >([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
+  const [additionalDetails, setAdditionalDetails] = useState<
+    Record<number, { tutorialLink: string; projectIdeas: string; librarySuggestions: string }>
+  >({});
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -35,27 +54,53 @@ const BulkAddComponentsPage: React.FC = () => {
   const handleAddComponents = async () => {
     try {
       const values = form.getFieldsValue();
-      const formattedData = values.components.map((component: {
-        name: string;
-        serialNumber: string;
-        description: string;
-        quantity: number;
-        subCategoryName: string;
-      }) => ({
-        name: component.name,
-        serialNumber: component.serialNumber,
-        description: component.description,
-        quantity: component.quantity,
-        subCategory: { subCategoryName: component.subCategoryName },
-      }));
+      const formattedData = values.components.map(
+        (
+          component: {
+            name: string;
+            serialNumber: string;
+            description: string;
+            quantity: number;
+            subCategoryName: string;
+          },
+          index: number
+        ) => ({
+          name: component.name,
+          serialNumber: component.serialNumber,
+          description: component.description,
+          quantity: component.quantity,
+          subCategory: { subCategoryName: component.subCategoryName },
+          ...(additionalDetails[index] || {}),
+        })
+      );
 
       await uploadComponentsJSON(formattedData);
 
       message.success("Componentes adicionados com sucesso!");
       form.resetFields();
+      setAdditionalDetails({});
     } catch {
       message.error("Erro ao adicionar componentes.");
     }
+  };
+
+  const openDetailsModal = (index: number) => {
+    setSelectedComponentIndex(index);
+    setIsModalVisible(true);
+  };
+
+  const handleDetailsSave = (values: {
+    tutorialLink: string;
+    projectIdeas: string;
+    librarySuggestions: string;
+  }) => {
+    if (selectedComponentIndex !== null) {
+      setAdditionalDetails((prev) => ({
+        ...prev,
+        [selectedComponentIndex]: values,
+      }));
+    }
+    setIsModalVisible(false);
   };
 
   return (
@@ -74,8 +119,9 @@ const BulkAddComponentsPage: React.FC = () => {
               Controle de Estoque de Componentes
             </h4>
             <p style={{ margin: 0, textAlign: "left" }}>
-              Utilize esta tela para adicionar múltiplos componentes ao estoque de forma manual.
-              Preencha as informações dos componentes e selecione a subcategoria correspondente.
+              Utilize esta tela para adicionar múltiplos componentes ao estoque de forma
+              manual. Preencha as informações dos componentes e selecione a subcategoria
+              correspondente.
             </p>
           </Col>
           <Col span={4}>
@@ -155,6 +201,14 @@ const BulkAddComponentsPage: React.FC = () => {
                     </Form.Item>
                   </Col>
                   <Col span={1}>
+                    <Button
+                      type="default"
+                      icon={<InfoCircleOutlined />}
+                      onClick={() => openDetailsModal(index)}
+                      style={{ width: "100%" }}
+                    />
+                  </Col>
+                  <Col span={1}>
                     {index === 0 ? (
                       <Button
                         type="dashed"
@@ -184,6 +238,28 @@ const BulkAddComponentsPage: React.FC = () => {
           Adicionar Componentes
         </Button>
       </Form>
+
+      <Modal
+        title="Mais Informações Detalhadas"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <Form onFinish={handleDetailsSave}>
+          <Form.Item name="tutorialLink" label="Link para Tutorial">
+            <Input placeholder="Ex.: https://www.youtube.com/..." />
+          </Form.Item>
+          <Form.Item name="projectIdeas" label="Ideias de Projetos">
+            <Input.TextArea placeholder="Dicas para projetos usando o componente" />
+          </Form.Item>
+          <Form.Item name="librarySuggestions" label="Sugestões de Bibliotecas">
+            <Input.TextArea placeholder="Sugestões de bibliotecas para usar com o componente" />
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Salvar
+          </Button>
+        </Form>
+      </Modal>
     </div>
   );
 };

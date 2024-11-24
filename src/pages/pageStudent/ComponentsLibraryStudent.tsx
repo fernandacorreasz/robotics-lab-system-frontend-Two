@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, message, Card, Row, Col, Tooltip, Input } from "antd";
+import { Table, Button, message, Card, Row, Col, Tooltip, Input, Tag } from "antd";
 import { EyeOutlined, DownOutlined, UpOutlined, SearchOutlined } from "@ant-design/icons";
 import RequestLoanModal from "./loan/RequestLoanModal";
 import { useNavigate } from "react-router-dom";
 import RoboticImage from "../../assets/img/robotic.png";
 import { fetchComponents, filterComponents } from "../../services/ComponentService";
-import { fetchComponentsLoad } from "../../services/LoanService";
+import { fetchComponentsLoad, fetchLoansByBorrower } from "../../services/LoanService";
 import FilterComponent from "../pageLaboratorista/info/FilterComponent";
+import { Loan } from "../../models/Loan";
 
 interface ComponentDetails {
   id: string;
@@ -45,8 +46,46 @@ const ComponentsLibraryStudent: React.FC = () => {
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   const [isFilteredCardVisible, setFilteredCardVisible] = useState<boolean>(true);
   const [isLoanCardVisible, setLoanCardVisible] = useState<boolean>(true);
+  const [studentLoans, setStudentLoans] = useState<Loan[]>([]);
+  const [filteredStudentLoans, setFilteredStudentLoans] = useState<Loan[]>([]);
+  const [loadingStudentLoans, setLoadingStudentLoans] = useState<boolean>(false);
   const [loanFilter, setLoanFilter] = useState<string>("");
   const navigate = useNavigate();
+
+  const loadStudentLoans = async (page = 0, size = 10) => {
+    try {
+      setLoadingStudentLoans(true);
+      const email = localStorage.getItem("email");
+      if (!email) {
+        message.error("E-mail do estudante não encontrado.");
+        return;
+      }
+      const data = await fetchLoansByBorrower(email, page, size);
+      setStudentLoans(data.content);
+      setFilteredStudentLoans(data.content); // Inicializa com todos os empréstimos
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(`Erro ao carregar empréstimos: ${error.message}`);
+      } else {
+        message.error("Erro desconhecido ao carregar empréstimos.");
+      }
+    } finally {
+      setLoadingStudentLoans(false);
+    }
+  };
+
+  const handleStudentLoanFilter = (value: string) => {
+    setLoanFilter(value);
+    const filtered = studentLoans.filter((loan) =>
+      loan.componentName.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredStudentLoans(filtered);
+  };
+
+  useEffect(() => {
+    loadStudentLoans();
+  }, []);
+  
 
   // Carrega os componentes filtrados para a primeira tabela
   const loadFilteredComponents = async (filters: Filter[] = [], page = 0, size = 10) => {
@@ -153,6 +192,52 @@ const ComponentsLibraryStudent: React.FC = () => {
       ),
     },
   ];
+
+
+ const statusMapping: { [key: string]: string } = {
+  PENDING_AUTHORIZATION: "Pendente de Autorização",
+  APPROVED: "Aprovado",
+  REJECTED: "Recusado",
+  IN_PROGRESS: "Em Andamento",
+  RETURNED: "Devolvido",
+  OVERDUE: "Atrasado",
+};
+
+const statusColors: { [key: string]: string } = {
+  PENDING_AUTHORIZATION: "gold",
+  APPROVED: "blue",
+  REJECTED: "red",
+  IN_PROGRESS: "purple",
+  RETURNED: "green",
+  OVERDUE: "volcano",
+};
+
+const studentLoanColumns = [
+  { title: "Componente", dataIndex: "componentName", key: "componentName" },
+  {
+    title: "Data do Empréstimo",
+    dataIndex: "loanDate",
+    key: "loanDate",
+    render: (value: string) => new Date(value).toLocaleDateString(),
+  },
+  {
+    title: "Data Esperada de Retorno",
+    dataIndex: "expectedReturnDate",
+    key: "expectedReturnDate",
+    render: (value: string) => new Date(value).toLocaleDateString(),
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (status: string) => (
+      <Tag color={statusColors[status]}>
+        {statusMapping[status] || "Desconhecido"}
+      </Tag>
+    ),
+  },
+  { title: "Quantidade", dataIndex: "quantity", key: "quantity" },
+];
 
   return (
     <>
@@ -264,6 +349,35 @@ const ComponentsLibraryStudent: React.FC = () => {
   )}
 </Card>
 
+<Card
+  style={{ marginBottom: "20px", padding: "10px" }}
+>
+  <Row align="middle" justify="space-between">
+    <Col>
+      <h3 style={{ margin: 0, textAlign: "left" }}>Meus Empréstimos</h3>
+    </Col>
+  </Row>
+  <Row style={{ marginTop: "10px", marginBottom: "20px" }} justify="start">
+    <Col>
+      <Input
+        placeholder="Filtrar por componente..."
+        prefix={<SearchOutlined />}
+        style={{ marginBottom: "10px", width: "300px" }}
+        value={loanFilter}
+        onChange={(e) => handleStudentLoanFilter(e.target.value)}
+      />
+    </Col>
+  </Row>
+  <Table
+    dataSource={filteredStudentLoans}
+    columns={studentLoanColumns}
+    loading={loadingStudentLoans}
+    rowKey="id"
+    pagination={{
+      onChange: (page, pageSize) => loadStudentLoans(page - 1, pageSize),
+    }}
+  />
+</Card>
 
       {/* Modal para Solicitar Empréstimo */}
       {selectedComponent && (

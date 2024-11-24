@@ -158,3 +158,29 @@ export const rejectLoan = async (loanData: { loanId: string; authorizerEmail: st
     throw new Error("Erro inesperado ao recusar empréstimo.");
   }
 };
+
+export const fetchLoansByBorrower = async (
+  borrowerEmail: string,
+  page = 0,
+  size = 10
+): Promise<{ content: Loan[] }> => {
+  try {
+    const response = await axios.post(
+      `${API_URL}loans/by-borrower`,
+      { borrowerEmail },
+      {
+        params: { page, size },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao buscar empréstimos.");
+    }
+    throw new Error("Erro inesperado ao buscar empréstimos.");
+  }
+};
+
