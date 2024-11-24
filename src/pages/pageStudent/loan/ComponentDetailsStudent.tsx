@@ -28,15 +28,19 @@ const ComponentDetailsStudent: React.FC = () => {
 
   useEffect(() => {
     const loadDetails = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchComponentDetails(id!);
-        setComponent(data);
-      } catch (error) {
-        message.error("Erro ao carregar os detalhes do componente.");
-      } finally {
-        setLoading(false);
-      }
+        try {
+            setLoading(true);
+            const data = await fetchComponentDetails(id!);
+            setComponent(data);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                message.error(`Erro ao carregar os detalhes do componente: ${error}`);
+            } else {
+                message.error("Erro desconhecido ao carregar os detalhes do componente.");
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     loadDetails();
