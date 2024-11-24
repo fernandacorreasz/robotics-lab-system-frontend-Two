@@ -12,7 +12,7 @@ interface CommentListProps {
 }
 
 const CommentList: React.FC<CommentListProps> = ({ comments, onEdit, onDelete }) => {
-  const commentColors = ["#E6E6FA", "#B3E5FC", "#F5F5F5"]; // lilás, azul bebê, cinza
+  const commentColors = ["#E6E6FA", "#B3E5FC", "#F5F5F5"];
 
   return (
     <div

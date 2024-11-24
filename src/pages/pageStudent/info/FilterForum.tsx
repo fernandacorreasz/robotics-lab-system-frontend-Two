@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Button, Input, Select, Space } from "antd";
 import { FilterOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
-const { Option } = Select;
-
 interface Filter {
   column: string;
   filterType: string;
@@ -14,7 +12,9 @@ interface FilterComponentProps {
   onApply: (filters: Filter[]) => void;
 }
 
-const ForumFilterComponent: React.FC<FilterComponentProps> = ({ onApply }) => {
+const { Option } = Select;
+
+const FilterForum: React.FC<FilterComponentProps> = ({ onApply }) => {
   const [filter, setFilter] = useState<Filter>({ column: "", filterType: "", value: "" });
 
   const handleFilterChange = (key: keyof Filter, value: string) => {
@@ -24,6 +24,8 @@ const ForumFilterComponent: React.FC<FilterComponentProps> = ({ onApply }) => {
   const handleApply = () => {
     if (filter.column && filter.filterType && filter.value) {
       onApply([filter]);
+    } else {
+      onApply([]);
     }
   };
 
@@ -34,22 +36,22 @@ const ForumFilterComponent: React.FC<FilterComponentProps> = ({ onApply }) => {
 
   return (
     <div>
-      <Space style={{ marginBottom: 8 }}>
+      <Space>
         <Select
-          placeholder="Coluna"
+          placeholder="Selecione uma coluna"
           style={{ width: 150 }}
           value={filter.column || undefined}
           onChange={(value) => handleFilterChange("column", value)}
         >
           <Option value="title">Título</Option>
           <Option value="description">Descrição</Option>
-          <Option value="status">Status</Option>
+          <Option value="codeSnippet">Código</Option>
           <Option value="userName">Usuário</Option>
         </Select>
 
         <Select
-          placeholder="Tipo de Filtro"
-          style={{ width: 120 }}
+          placeholder="Tipo de filtro"
+          style={{ width: 150 }}
           value={filter.filterType || undefined}
           onChange={(value) => handleFilterChange("filterType", value)}
         >
@@ -59,14 +61,12 @@ const ForumFilterComponent: React.FC<FilterComponentProps> = ({ onApply }) => {
         </Select>
 
         <Input
-          placeholder="Valor"
+          placeholder="Digite o valor"
           style={{ width: 200 }}
           value={filter.value}
           onChange={(e) => handleFilterChange("value", e.target.value)}
         />
-      </Space>
 
-      <Space>
         <Button type="primary" icon={<FilterOutlined />} onClick={handleApply}>
           Aplicar
         </Button>
@@ -78,4 +78,4 @@ const ForumFilterComponent: React.FC<FilterComponentProps> = ({ onApply }) => {
   );
 };
 
-export default ForumFilterComponent;
+export default FilterForum;

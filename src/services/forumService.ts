@@ -99,3 +99,59 @@ export const createComment = async (commentData: {
     throw new Error("Erro inesperado ao adicionar comentário");
   }
 };
+
+
+// Serviço para criar uma nova tag
+export const createTag = async (tagData: { name: string }): Promise<void> => {
+  try {
+    await axios.post(`${API_URL}forum/tags`, tagData);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao criar a tag");
+    }
+    throw new Error("Erro inesperado ao criar a tag");
+  }
+};
+
+// Serviço para listar tags
+export const fetchTags = async (): Promise<Tag[]> => {
+  try {
+    const response = await axios.get(`${API_URL}forum/tags`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao buscar as tags");
+    }
+    throw new Error("Erro inesperado ao buscar as tags");
+  }
+};
+
+// Serviço para deletar perguntas
+export const deleteForum = async (forumIds: string[]): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}forum/delete`, {
+      data: forumIds,
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao deletar pergunta");
+    }
+    throw new Error("Erro inesperado ao deletar pergunta");
+  }
+};
+
+export const updateForum = async (forumData: {
+  id: string;
+  title: string;
+  description: string;
+  codeSnippet?: string;
+}): Promise<void> => {
+  try {
+    await axios.put(`${API_URL}forum/update`, forumData);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao atualizar o fórum");
+    }
+    throw new Error("Erro inesperado ao atualizar o fórum");
+  }
+};

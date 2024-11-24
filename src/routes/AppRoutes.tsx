@@ -52,6 +52,7 @@ const AppRoutes: React.FC = () => {
           element={<PerformanceReportsAdmin />}
         />
         <Route path="forum-sac" element={<ForumSACAdmin />} />
+        <Route path="forum-sac/:postId" element={<PostDetails />} />
         <Route path="profile-settings" element={<ProfileSettingsAdmin />} />
       </Route>
 
@@ -84,7 +85,10 @@ const AppRoutes: React.FC = () => {
         <Route path="manage-stock" element={<ManageStockLaboratorist />} />
         <Route path="manage-loans" element={<ManageLoansLaboratorist />} />
         <Route path="forum" element={<ForumLaboratorist />} />
+        <Route path="forum/:postId" element={<PostDetails />} />
       </Route>
+
+
       <Route
         path="/student"
         element={
