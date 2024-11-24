@@ -17,11 +17,11 @@ const LoginPage: React.FC = () => {
       const response = await loginUser(values);
       message.success("Login realizado com sucesso");
       if (response.permissionLevel === 3) {
-        navigate("/admin");
+        navigate("/admin/manage-users");
       } else if (response.permissionLevel === 2) {
-        navigate("/laboratorist");
+        navigate("/laboratorist/manage-activities");
       } else if (response.permissionLevel === 1) {
-        navigate("/student");
+        navigate("/student/activities");
       } else {
         navigate("/unauthorized");
       }

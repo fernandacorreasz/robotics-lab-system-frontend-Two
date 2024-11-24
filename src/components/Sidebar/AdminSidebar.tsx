@@ -11,13 +11,16 @@ const AdminSidebar: React.FC = () => {
     localStorage.removeItem('permissionLevel');
     navigate('/');
   };
+  const selectedKey = location.pathname.includes('/student/forum/')
+  ? 'forum-sac' 
+  : location.pathname.split('/')[2];
 
   return (
     <Menu
-      mode="inline"
-      defaultSelectedKeys={['dashboard']}
-      style={{ height: '100%', borderRight: 0 }}
-    >
+    mode="inline"
+    selectedKeys={[selectedKey]} // Garante que o item correto esteja selecionado
+    style={{ height: '100%', borderRight: 0, textAlign: 'left' }}
+  >
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
         Logout
       </Menu.Item>
