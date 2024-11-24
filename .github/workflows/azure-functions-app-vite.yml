@@ -45,20 +45,16 @@ jobs:
 
       # Verificar se o servidor está rodando antes de continuar
       - name: Wait for Server to be Ready
-        run: npx wait-on http://localhost:5173
+        run: |
+          npx wait-on http://localhost:5173
 
-      # Executar testes Cypress
+      # Executar testes Cypress com o repórter mocha-sonarqube-reporter
       - name: Run Cypress Tests
         run: |
           mkdir -p test-results/cypress
-          npx cypress run --reporter junit --reporter-options "mochaFile=test-results/cypress/results-junit.xml"
+          npx cypress run --reporter mocha-sonarqube-reporter --reporter-options "output=test-results/cypress/results-sonarqube.xml"
         env:
           CI: true
-
-      # Converter relatório JUnit para Generic Test Data
-      - name: Convert JUnit Report to SonarQube Format
-        run: |
-          node .github/workflows/scripts/convert-junit-to-sonarqube.js test-results/cypress/results-junit.xml test-results/cypress/results-sonarqube.xml
 
       # Análise com o SonarQube
       - name: SonarQube Scan
