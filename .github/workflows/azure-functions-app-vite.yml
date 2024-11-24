@@ -51,9 +51,14 @@ jobs:
       - name: Run Cypress Tests
         run: |
           mkdir -p test-results/cypress
-          npx cypress run --reporter junit --reporter-options "mochaFile=test-results/cypress/results.xml"
+          npx cypress run --reporter junit --reporter-options "mochaFile=test-results/cypress/results-junit.xml"
         env:
           CI: true
+
+      # Converter relatório JUnit para Generic Test Data
+      - name: Convert JUnit Report to SonarQube Format
+        run: |
+          npx junit-to-sonarqube-generic-test-data test-results/cypress/results-junit.xml > test-results/cypress/results-sonarqube.xml
 
       # Análise com o SonarQube
       - name: SonarQube Scan
@@ -66,7 +71,7 @@ jobs:
             -Dsonar.projectKey=robotics-lab-system-frontend-Two
             -Dsonar.sources=src
             -Dsonar.typescript.tsconfigPath=tsconfig.json
-            -Dsonar.testExecutionReportPaths=test-results/cypress/results.xml
+            -Dsonar.testExecutionReportPaths=test-results/cypress/results-sonarqube.xml
 
       # Verificação do Quality Gate
       - name: Check SonarQube Quality Gate
