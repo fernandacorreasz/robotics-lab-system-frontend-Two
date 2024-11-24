@@ -51,13 +51,9 @@ jobs:
       - name: Run Cypress Tests
         run: |
           mkdir -p test-results/cypress
-          npx cypress run --reporter junit --reporter-options "mochaFile=test-results/cypress/results-[hash].xml"
+          npx cypress run --reporter junit --reporter-options "mochaFile=test-results/cypress/results.xml"
         env:
           CI: true
-
-      # Publicar resultados de teste no SonarQube
-      - name: Publish Test Results to SonarQube
-        run: echo "Test results published successfully."
 
       # Análise com o SonarQube
       - name: SonarQube Scan
@@ -70,7 +66,7 @@ jobs:
             -Dsonar.projectKey=robotics-lab-system-frontend-Two
             -Dsonar.sources=src
             -Dsonar.typescript.tsconfigPath=tsconfig.json
-            -Dsonar.testExecutionReportPaths=test-results/cypress
+            -Dsonar.testExecutionReportPaths=test-results/cypress/results.xml
 
       # Verificação do Quality Gate
       - name: Check SonarQube Quality Gate
