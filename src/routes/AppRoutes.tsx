@@ -22,8 +22,6 @@ import ComponentsLibraryStudent from "../pages/pageStudent/ComponentsLibraryStud
 import NotificationsStudent from "../pages/pageStudent/NotificationsStudent";
 import ForumStudent from "../pages/pageStudent/ForumStudent";
 import RequestCertificateStudent from "../pages/pageStudent/RequestCertificateStudent";
-import ViewActivity from "../pages/pageStudent/info/ViewActivity";
-import AddActivity from "../pages/pageStudent/info/AddActivity";
 import BulkAddComponentsPage from "../pages/pageLaboratorista/info/BulkAddComponentsPage";
 import AddActivityLaboratorist from "../pages/pageLaboratorista/info/AddActivityLaboratorist";
 import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; 
@@ -103,8 +101,14 @@ const AppRoutes: React.FC = () => {
       >
         <Route path="dashboard" element={<DashboardStudent />} />
         <Route path="activities" element={<ActivitiesStudent />} />
-        <Route path="activities/view/:activityId" element={<ViewActivity />} />
-        <Route path="activities/add" element={<AddActivity />} />
+        <Route
+          path="activities/add"
+          element={<AddActivityLaboratorist />}
+        />
+        <Route
+          path="activities/view/:activityId"
+          element={<ViewActivityLaboratorist />}
+        />{" "}
         <Route
           path="components-library"
           element={<ComponentsLibraryStudent />}

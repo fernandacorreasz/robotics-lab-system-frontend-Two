@@ -175,7 +175,7 @@ const ViewActivityLaboratorist: React.FC = () => {
 
   return (
     <>
-   <Card title="Atividade - Laboratorista">
+   <Card title="Info - Atividade">
         <div
           style={{
             marginBottom: "20px",

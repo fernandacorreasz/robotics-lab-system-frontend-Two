@@ -10,11 +10,11 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Activity } from "../../models/Activity";
-import { fetchActivitiesByUserId } from "../../services/ActivityService";
+import { deleteActivities, fetchActivitiesByUserId } from "../../services/ActivityService";
 import moment from "moment";
-import HeaderCard from "../../components/Cards/HeaderCardStudants";
-import FilterSection from "./info/FilterSection";
 import { statusColors, statusLabels, columnHeaderStyles } from "../../styles/statusStyles";
+import FilterSection from "../pageStudent/info/FilterSection";
+import HeaderCard from "../../components/Cards/HeaderCardStudants";
 
 const ActivitiesStudent: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -36,6 +36,21 @@ const ActivitiesStudent: React.FC = () => {
       message.error("Usuário não identificado.");
     }
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteActivities([id]);
+      message.success("Atividade excluída com sucesso!");
+      setActivities((prev) => prev.filter((activity) => activity.id !== id));
+      setFilteredActivities((prev) => prev.filter((activity) => activity.id !== id));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message || "Erro ao excluir atividade.");
+      } else {
+        message.error("Erro desconhecido ao excluir atividade.");
+      }
+    }
+  };
 
   const applyFilter = () => {
     const filtered = activities.filter((activity) => {
@@ -69,26 +84,18 @@ const ActivitiesStudent: React.FC = () => {
     setFilteredActivities(activities);
   };
 
-  const scrollStyle = `
-    ::-webkit-scrollbar {
-      width: 2px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: #e6e6e6;
-      border-radius: 10px;
-    }
-    /* Firefox scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: #e6e6e6 transparent;
-  `;
+  const renderDate = (startDate: string | null, endDate: string | null) => {
+    const start = startDate ? new Date(startDate).toLocaleDateString() : "Em andamento";
+    const end = endDate ? new Date(endDate).toLocaleDateString() : "Atividade ainda não finalizada";
+    return `${start} - ${end}`;
+  };
 
   const renderColumn = (status: keyof typeof statusLabels, title: string) => (
-    <Col span={5} key={status} style={{ paddingTop: "16px" }}>
+    <Col span={5} key={status}>
       <div
         style={{
           ...columnHeaderStyles[status],
           textAlign: "center",
-          padding: "8px",
           fontWeight: "bold",
           borderRadius: "4px 4px 0 0",
           marginBottom: "8px",
@@ -103,7 +110,6 @@ const ActivitiesStudent: React.FC = () => {
           paddingRight: "4px",
         }}
       >
-        <style>{scrollStyle}</style>
         {filteredActivities
           .filter((activity) => activity.activityStatus === status)
           .map((activity) => (
@@ -116,7 +122,7 @@ const ActivitiesStudent: React.FC = () => {
                 boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
               }}
               actions={[
-                <DeleteOutlined onClick={() => console.log("Excluir", activity)} style={{ color: "#f5222d" }} />,
+                <DeleteOutlined  onClick={() => handleDelete(activity.id)} style={{ color: "#f5222d" }} />,
                 <Link to={`/student/activities/view/${activity.id}`}>
                   <RightOutlined style={{ color: "#52c41a" }} />
                 </Link>,
@@ -145,7 +151,7 @@ const ActivitiesStudent: React.FC = () => {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", marginBottom: "4px", fontSize: "12px" }}>
                   <CalendarOutlined style={{ color: "#faad14", marginRight: 4 }} />
-                  <span>{new Date(activity.startDate).toLocaleDateString()} - {new Date(activity.endDate).toLocaleDateString()}</span>
+                  <span>{renderDate(activity.startDate, activity.endDate)}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", fontSize: "12px", color: "#8c8c8c" }}>
                   <UserOutlined style={{ marginRight: 4 }} />
@@ -177,9 +183,6 @@ const ActivitiesStudent: React.FC = () => {
             />
           </Col>
           <Col>
-            <Button type="primary" style={{ marginRight: 8 }}>
-              Relatório
-            </Button>
             <Button type="primary">
               <Link to="/student/activities/add" style={{ color: "white" }}>
                 Adicionar Atividade

@@ -150,7 +150,7 @@ const AddActivityLaboratorist: React.FC = () => {
   ];
 
   return (
-    <Card title="Adicionar Nova Atividade - Laboratorista">
+    <Card title="Adicionar Nova Atividade">
       <Form form={form} layout="vertical" onFinish={handleAdd}>
         <Form.Item
           name="activityTitle"
