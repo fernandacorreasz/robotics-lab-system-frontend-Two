@@ -9,19 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Checkout do código
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Necessário para relevância na análise do SonarQube
+          fetch-depth: 0
       
       # Configuração do Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+
       # Cache de pacotes npm
       - name: Cache npm packages
         uses: actions/cache@v3
@@ -30,14 +30,23 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-          
+
       # Instalação de dependências
       - name: Install Dependencies
         run: npm ci
-          
-      # Build da aplicação
-      - name: Build
-        run: npm run build
+
+      # Iniciar o servidor da aplicação
+      - name: Start Application Server
+        run: npm run dev &
+        env:
+          PORT: 5173
+        timeout-minutes: 1 # Aguarda 1 minuto para o servidor subir
+
+      # Verificar se o servidor está rodando antes de continuar
+      - name: Wait for Server to be Ready
+        run: |
+          npx wait-on http://localhost:5173
+
       # Executar testes Cypress
       - name: Run Cypress Tests
         run: |
@@ -63,21 +72,26 @@ jobs:
             -Dsonar.typescript.tsconfigPath=tsconfig.json
             -Dsonar.testExecutionReportPaths=test-results/cypress
 
-      # Verificação do Quality Gate (Opcional)
+      # Verificação do Quality Gate
       - name: Check SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
+
+      # Build da aplicação
+      - name: Build Application
+        run: npm run build
+
       # Build da imagem Docker
-      - name: Build Docker image
+      - name: Build Docker Image
         run: |
           docker build -t vite-typescript-app:latest .
           docker save vite-typescript-app:latest -o vite-typescript-app.tar
-          
+
       # Deploy para Produção
       - name: Deploy to Production
+        if: success()
         env:
           PROD_HOST: ${{ secrets.PROD_HOST }}
           PROD_USER: ${{ secrets.PROD_USER }}
