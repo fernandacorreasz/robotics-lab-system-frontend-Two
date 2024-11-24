@@ -145,3 +145,16 @@ export const returnLoan = async (loanData: {
     throw new Error("Erro inesperado ao registrar devolução.");
   }
 };
+
+export const rejectLoan = async (loanData: { loanId: string; authorizerEmail: string }) => {
+  try {
+    await axios.post(`${API_URL}loans/reject`, loanData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Erro ao recusar empréstimo.");
+    }
+    throw new Error("Erro inesperado ao recusar empréstimo.");
+  }
+};

@@ -6,6 +6,7 @@ import {
   authorizeLoan,
   fetchComponentsLoad,
   listLoans,
+  rejectLoan,
   returnLoan,
 } from "../../services/LoanService";
 import {
@@ -17,7 +18,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ComponentDetails } from "../../models/ComponentDetails";
 import HeaderCardLaboratorist from "../../components/Cards/HeaderCardLaboratorist";
-
+import FilterLaonsLab from "./info/FilterLaonsLab";
+interface Filter {
+  column: string;
+  filterType: string;
+  value: string;
+}
 const statusMapping: { [key: string]: string } = {
   PENDING_AUTHORIZATION: "Pendente de Autorização",
   APPROVED: "Aprovado",
@@ -38,6 +44,8 @@ const ManageLoansLaboratorist: React.FC = () => {
   const [loadingLoans, setLoadingLoans] = useState<boolean>(false);
   const [loanComponents, setLoanComponents] = useState<ComponentDetails[]>([]);
   const [isFilteredCardVisible, setFilteredCardVisible] = useState<boolean>(true);
+  const [filteredLoans, setFilteredLoans] = useState<Loan[]>([]);
+  const [filters, setFilters] = useState<Filter[]>([]);
   const [filteredLoanComponents, setFilteredLoanComponents] = useState<
     ComponentDetails[]
   >([]);
@@ -45,11 +53,20 @@ const ManageLoansLaboratorist: React.FC = () => {
   const navigate = useNavigate();
   const [returnModalVisible, setReturnModalVisible] = useState(false);
   const [returnQuantity, setReturnQuantity] = useState<number>(1);
+  useEffect(() => {
+    loadLoans();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters]);
+
   const loadLoans = async () => {
     try {
       setLoading(true);
       const data = await listLoans(page, 10);
       setLoans(data.content);
+      setFilteredLoans(data.content);
     } catch (error) {
       message.error(
         error instanceof Error ? error.message : "Erro ao carregar empréstimos."
@@ -57,6 +74,24 @@ const ManageLoansLaboratorist: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    let updatedLoans = [...loans];
+    filters.forEach((filter) => {
+      updatedLoans = updatedLoans.filter((loan) => {
+        const value = loan[filter.column as keyof Loan]?.toString() || "";
+        if (filter.filterType === "like") {
+          return value.toLowerCase().includes(filter.value.toLowerCase());
+        } else if (filter.filterType === "equal") {
+          return value === filter.value;
+        } else if (filter.filterType === "not_equal") {
+          return value !== filter.value;
+        }
+        return true;
+      });
+    });
+    setFilteredLoans(updatedLoans);
   };
 
   const handleLoanFilter = (value: string) => {
@@ -142,7 +177,25 @@ const ManageLoansLaboratorist: React.FC = () => {
       );
     }
   };
- 
+  
+  const handleRejectLoan = async (loan: Loan) => {
+    const authorizerEmail = localStorage.getItem("email");
+    if (!authorizerEmail) {
+      message.error("E-mail do autorizador não encontrado.");
+      return;
+    }
+  
+    try {
+      await rejectLoan({ loanId: loan.id, authorizerEmail });
+      message.success("Empréstimo recusado com sucesso!");
+      loadLoans(); 
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : "Erro ao recusar empréstimo."
+      );
+    }
+  };
+  
   useEffect(() => {
     loadLoans();
   }, [page]);
@@ -224,6 +277,11 @@ const ManageLoansLaboratorist: React.FC = () => {
               Autorizar
             </Button>
           )}
+          {record.status === "PENDING_AUTHORIZATION" && (
+            <Button style={{marginLeft:"2px", backgroundColor:"#A31F00", color:"#fff"}}  onClick={() => handleRejectLoan(record)}>
+              RECUSAR
+            </Button>
+          )}
           {record.status === "APPROVED" && (
             <Button
               type="dashed"
@@ -236,7 +294,9 @@ const ManageLoansLaboratorist: React.FC = () => {
               Registrar Devolução
             </Button>
           )}
+          
         </>
+        
       ),
     },
   ];
@@ -333,11 +393,15 @@ const ManageLoansLaboratorist: React.FC = () => {
               justify="start"
             >
               <Col>
-              filtro
+              <FilterLaonsLab
+              onApply={(newFilters) => {
+                setFilters(newFilters);
+              }}
+            />
               </Col>
             </Row>
             <Table
-          dataSource={loans}
+          dataSource={filteredLoans}
           columns={columns}
           rowKey="id"
           loading={loading}

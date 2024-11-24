@@ -16,7 +16,11 @@ interface FilterComponentProps {
 const { Option } = Select;
 
 const FilterLaonsLab: React.FC<FilterComponentProps> = ({ onApply }) => {
-  const [filter, setFilter] = useState<Filter>({ column: "", filterType: "", value: "" });
+  const [filter, setFilter] = useState<Filter>({
+    column: "",
+    filterType: "",
+    value: "",
+  });
 
   const handleFilterChange = (key: keyof Filter, value: string) => {
     setFilter({ ...filter, [key]: value });
@@ -40,12 +44,12 @@ const FilterLaonsLab: React.FC<FilterComponentProps> = ({ onApply }) => {
           value={filter.column || undefined}
           onChange={(value) => handleFilterChange("column", value)}
         >
-          <Option value="name">Nome</Option>
-          <Option value="serialNumber">Número de Série</Option>
-          <Option value="description">Descrição</Option>
+          <Option value="loanId">ID Empréstimo</Option>
+          <Option value="borrowerEmail">E-mail Solicitante</Option>
+          <Option value="authorizerEmail">E-mail Autorizador</Option>
+          <Option value="componentName">Componente</Option>
           <Option value="quantity">Quantidade</Option>
-          <Option value="subCategoryName">Subcategoria</Option>
-          <Option value="categoryName">Categoria</Option>
+          <Option value="status">Status</Option>
         </Select>
 
         <Select
@@ -68,8 +72,17 @@ const FilterLaonsLab: React.FC<FilterComponentProps> = ({ onApply }) => {
       </Space>
 
       <Space>
-        <Button type="primary"  style={{marginLeft:"4px"}} icon={<FilterOutlined />} onClick={handleApply} />
-        <Button type="default" icon={<CloseCircleOutlined />} onClick={handleClearFilters} />
+        <Button
+          type="primary"
+          style={{ marginLeft: "4px" }}
+          icon={<FilterOutlined />}
+          onClick={handleApply}
+        />
+        <Button
+          type="default"
+          icon={<CloseCircleOutlined />}
+          onClick={handleClearFilters}
+        />
       </Space>
     </div>
   );
