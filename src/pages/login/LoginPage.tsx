@@ -19,9 +19,9 @@ const LoginPage: React.FC = () => {
       if (response.permissionLevel === 3) {
         navigate("/admin/manage-users");
       } else if (response.permissionLevel === 2) {
-        navigate("/laboratorist/manage-activities");
+        navigate("/laboratorist/dashboard");
       } else if (response.permissionLevel === 1) {
-        navigate("/student/activities");
+        navigate("/student/dashboard");
       } else {
         navigate("/unauthorized");
       }

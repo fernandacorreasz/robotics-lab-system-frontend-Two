@@ -11,7 +11,6 @@ import CertificatesAdmin from "../pages/pageAdmin/CertificatesAdmin";
 import PerformanceReportsAdmin from "../pages/pageAdmin/PerformanceReportsAdmin";
 import ForumSACAdmin from "../pages/pageAdmin/ForumSACAdmin";
 import ProfileSettingsAdmin from "../pages/pageAdmin/ProfileSettingsAdmin";
-import DashboardLaboratorist from "../pages/pageLaboratorista/DashboardLaboratorist";
 import ManageActivitiesLaboratorist from "../pages/pageLaboratorista/ManageActivitiesLaboratorist";
 import ManageStockLaboratorist from "../pages/pageLaboratorista/ManageStockLaboratorist";
 import ManageLoansLaboratorist from "../pages/pageLaboratorista/ManageLoansLaboratorist";
@@ -27,6 +26,7 @@ import AddActivityLaboratorist from "../pages/pageLaboratorista/info/AddActivity
 import ViewActivityLaboratorist from "../pages/pageLaboratorista/info/ViewActivityLaboratorist"; 
 import ComponentDetailsStudent from "../pages/pageStudent/loan/ComponentDetailsStudent";
 import PostDetails from "../pages/pageStudent/info/PostDetails";
+import DashboardLaboratorist from "../pages/pageLaboratorista/DashboardLaboratorist";
 
 const AppRoutes: React.FC = () => {
   return (

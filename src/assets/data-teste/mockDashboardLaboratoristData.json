@@ -1,0 +1,42 @@
+{
+    "cards": [
+      {
+        "title": "Empréstimos Solicitados",
+        "metrics": {
+          "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "data": [10, 15, 20, 25, 30, 35]
+        }
+      },
+      {
+        "title": "Componentes Cadastrados no Mês",
+        "metrics": {
+          "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "data": [5, 8, 12, 7, 9, 15]
+        }
+      },
+      {
+        "title": "Atividades Executadas por Estudantes",
+        "metrics": {
+          "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "data": [25, 30, 45, 50, 55, 60]
+        }
+      },
+      {
+        "title": "Progresso de Atividades do Laboratorista",
+        "metrics": {
+          "totalActivities": 20,
+          "completed": 15,
+          "inProgress": 4,
+          "notStarted": 1
+        }
+      },
+      {
+        "title": "Interações no Fórum",
+        "metrics": {
+          "labels": ["Postagens", "Respostas", "Curtidas"],
+          "data": [12, 20, 35]
+        }
+      }
+    ]
+  }
+  

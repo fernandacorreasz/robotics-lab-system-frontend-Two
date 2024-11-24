@@ -1,125 +1,199 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { Card, Row, Col, message } from "antd";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Radar, RadarChart,
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer
-} from 'recharts';
-import { Card, Col, Row } from 'antd';
-import dashboardData from '../../assets/data-teste/mockDashboardStudantData.json'; // Importar o JSON
-import HeaderCard from '../../components/Cards/HeaderCardStudants';
-
-// Tipos para os dados do Dashboard
-interface ActivityMetrics {
-  totalActivities: number;
-  completed: number;
-  inProgress: number;
-  notStarted: number;
-}
-
-interface TimeSpentMetrics {
-  labels: string[];
-  data: number[];
-}
-
-interface ComponentsUsedMetrics {
-  labels: string[];
-  data: number[];
-}
-
-interface ForumMetrics {
-  labels: string[];
-  data: number[];
-}
-
-interface CardData {
-  title: string;
-  metrics: ActivityMetrics | TimeSpentMetrics | ComponentsUsedMetrics | ForumMetrics;
-}
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
+import { fetchActivitiesByUserId } from "../../services/ActivityService";
+import { fetchForums } from "../../services/forumService";
+import { Activity } from "../../models/Activity";
+import { Forum } from "../../models/Forum";
+import HeaderCardDashboard from "../../components/Cards/HeaderCardDashboard";
 
 const DashboardStudent: React.FC = () => {
-  const [cards, setCards] = useState<CardData[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [forums, setForums] = useState<Forum[]>([]);
+  const [activityMetrics, setActivityMetrics] = useState({
+    total: 0,
+    completed: 0,
+    inProgress: 0,
+    notStarted: 0,
+  });
+  const [forumMetrics, setForumMetrics] = useState({
+    questions: 0,
+    comments: 0,
+  });
+
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"];
 
   useEffect(() => {
-    // Simulando a requisição da API e setando os dados no estado
-    setCards(dashboardData.cards);
+    const loadDashboardData = async () => {
+      const userName = localStorage.getItem("name") || "";
+
+      try {
+        // Carregar atividades
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          const activitiesData = await fetchActivitiesByUserId(userId);
+          setActivities(activitiesData);
+
+          const metrics = activitiesData.reduce(
+            (acc, activity) => {
+              acc.total += 1;
+              if (activity.activityStatus === "COMPLETED") {
+                acc.completed += 1;
+              } else if (activity.activityStatus === "IN_PROGRESS") {
+                acc.inProgress += 1;
+              } else if (activity.activityStatus === "NOT_STARTED") {
+                acc.notStarted += 1;
+              }
+              return acc;
+            },
+            { total: 0, completed: 0, inProgress: 0, notStarted: 0 }
+          );
+
+          setActivityMetrics(metrics);
+        }
+
+        // Carregar fóruns
+        const forumsData = await fetchForums([], 0, 100);
+        setForums(forumsData.content);
+
+        const forumMetrics = forumsData.content.reduce(
+          (acc, forum) => {
+            if (forum.userName === userName) {
+              acc.questions += 1;
+            }
+            forum.comments.forEach((comment) => {
+              if (comment.userName === userName) {
+                acc.comments += 1;
+              }
+            });
+            return acc;
+          },
+          { questions: 0, comments: 0 }
+        );
+
+        setForumMetrics(forumMetrics);
+      } catch (error) {
+        message.error(
+          error instanceof Error
+            ? error.message
+            : "Erro ao carregar os dados do dashboard."
+        );
+      }
+    };
+
+    loadDashboardData();
   }, []);
 
+  const totalTimeSpent = activities.reduce(
+    (acc, activity) => acc + activity.timeSpent,
+    0
+  );
+
   return (
-    <div style={{ padding: '20px' }}>
-      <HeaderCard />
+    <div style={{ padding: "20px" }}>
+      <HeaderCardDashboard />
       <Row gutter={[16, 16]}>
-        {/* Atividades Concluídas - Radar Chart */}
         <Col span={12}>
-          <Card title={cards[0]?.title}>
+          <Card title="Distribuição de Atividades por Status">
             <ResponsiveContainer width="100%" height={300}>
-              <RadarChart outerRadius={90} data={[
-                { subject: 'Concluídas', value: (cards[0]?.metrics as ActivityMetrics)?.completed || 0, fullMark: 50 },
-                { subject: 'Em Progresso', value: (cards[0]?.metrics as ActivityMetrics)?.inProgress || 0, fullMark: 50 },
-                { subject: 'Não Iniciadas', value: (cards[0]?.metrics as ActivityMetrics)?.notStarted || 0, fullMark: 50 }
-              ]}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis angle={30} domain={[0, 50]} />
-                <Radar name="Atividades" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              </RadarChart>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: "Concluídas", value: activityMetrics.completed },
+                    { name: "Em Progresso", value: activityMetrics.inProgress },
+                    { name: "Não Iniciadas", value: activityMetrics.notStarted },
+                  ]}
+                  dataKey="value"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label
+                >
+                  {["Concluídas", "Em Progresso", "Não Iniciadas"].map(
+                    (_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                    )
+                  )}
+                </Pie>
+                <Tooltip />
+              </PieChart>
             </ResponsiveContainer>
-            <p>Este gráfico mostra o progresso das atividades, dividindo entre concluídas, em progresso e não iniciadas.</p>
+            <p style={{ textAlign: "center", marginTop: "10px" }}>
+              Veja como estão distribuídas as suas atividades.
+            </p>
           </Card>
         </Col>
 
-        {/* Tempo Investido - Line Chart */}
+        {/* Contribuições no Fórum - Gráfico de Barras */}
         <Col span={12}>
-          <Card title={cards[1]?.title}>
+          <Card title="Contribuições no Fórum">
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={(cards[1]?.metrics as TimeSpentMetrics)?.labels.map((label: string, index: number) => ({
-                name: label,
-                tempo: (cards[1]?.metrics as TimeSpentMetrics)?.data[index]
-              }))}>
+              <BarChart
+                data={[
+                  { name: "Perguntas", value: forumMetrics.questions },
+                  { name: "Comentários", value: forumMetrics.comments },
+                ]}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="tempo" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer>
-            <p>Este gráfico de linha mostra o tempo investido por mês em atividades relacionadas ao laboratório.</p>
-          </Card>
-        </Col>
-
-        {/* Componentes Utilizados - Bar Chart */}
-        <Col span={12}>
-          <Card title={cards[2]?.title}>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={(cards[2]?.metrics as ComponentsUsedMetrics)?.labels.map((label: string, index: number) => ({
-                name: label,
-                quantidade: (cards[2]?.metrics as ComponentsUsedMetrics)?.data[index]
-              }))}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="quantidade" fill="#8884d8" />
+                <Bar dataKey="value" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
-            <p>Este gráfico de barras mostra a quantidade de componentes eletrônicos utilizados durante as atividades.</p>
+            <p style={{ textAlign: "center", marginTop: "10px" }}>
+              Suas contribuições no fórum (perguntas e comentários).
+            </p>
           </Card>
         </Col>
 
-        {/* Participação no Fórum - Bar Chart */}
+        {/* Tempo Total Gasto em Atividades */}
         <Col span={12}>
-          <Card title={cards[3]?.title}>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={(cards[3]?.metrics as ForumMetrics)?.labels.map((label: string, index: number) => ({
-                name: label,
-                valor: (cards[3]?.metrics as ForumMetrics)?.data[index]
-              }))}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="valor" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-            <p>Este gráfico de barras mostra a participação do estudante no fórum, incluindo postagens, respostas e curtidas.</p>
+          <Card title="Tempo Total Gasto em Atividades">
+            <h3 style={{ textAlign: "center", fontSize: "40px", color: "#82ca9d" }}>
+              {Math.floor(totalTimeSpent / 60)}h {totalTimeSpent % 60}m
+            </h3>
+            <p style={{ textAlign: "center" }}>
+              Este é o tempo total que você dedicou às suas atividades.
+            </p>
+          </Card>
+        </Col>
+
+        {/* Perguntas Recentes */}
+        <Col span={24}>
+          <Card title="Perguntas Recentes no Fórum">
+            {forums
+              .filter((forum) => forum.userName === localStorage.getItem("name"))
+              .slice(0, 3)
+              .map((forum) => (
+                <div
+                  key={forum.id}
+                  style={{
+                    marginBottom: "10px",
+                    padding: "10px",
+                    border: "1px solid #f0f0f0",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <h4>{forum.title}</h4>
+                  <p>{forum.description}</p>
+                  <p>Data de Criação: {new Date(forum.creationDate).toLocaleDateString()}</p>
+                </div>
+              ))}
+            <p style={{ textAlign: "center", marginTop: "20px" }}>
+              Estas são suas perguntas mais recentes no fórum.
+            </p>
           </Card>
         </Col>
       </Row>

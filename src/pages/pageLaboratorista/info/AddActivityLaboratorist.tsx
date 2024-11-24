@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Card,
   Form,
@@ -37,7 +36,6 @@ interface Component {
 }
 
 const AddActivityLaboratorist: React.FC = () => {
-  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [components, setComponents] = useState<Component[]>([]);
@@ -74,7 +72,6 @@ const AddActivityLaboratorist: React.FC = () => {
 
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
-      navigate("/laboratorist/manage-activities");
     } catch (error: unknown) {
       if (error instanceof Error) {
         message.error(error.message || "Erro ao criar atividade. Tente novamente.");

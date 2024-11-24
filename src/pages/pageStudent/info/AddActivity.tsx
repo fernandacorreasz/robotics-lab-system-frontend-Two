@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, Form, Input, Button, DatePicker, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
@@ -20,7 +19,6 @@ interface FormValues {
 }
 
 const AddActivity: React.FC = () => {
-  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
 
@@ -49,7 +47,6 @@ const AddActivity: React.FC = () => {
       // Enviar para o backend
       await createActivity(formData);
       message.success("Atividade criada com sucesso!");
-      navigate("/student/activities"); 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
       message.error( "Erro ao criar atividade. Tente novamente.");
