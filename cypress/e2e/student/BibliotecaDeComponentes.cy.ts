@@ -1,49 +1,49 @@
 describe('Testes da Biblioteca de Componentes', () => {
     const componentsResponse = {
-        content: [
+        "content": [
             {
-                id: 'b73244f1-9438-4f69-a417-adf4e581e610',
-                componentId: '1fe58c33-bb7a-4e88-8415-f50c1b0f0791',
-                name: 'Resistor',
-                serialNumber: '12355ss5455ss6',
-                description: 'Resistor',
-                quantity: 100,
-                subCategoryId: '00414a60-9133-4e9a-8549-818141a800a3',
-                subCategoryName: 'sss',
-                categoryId: '4b19787e-51d6-476d-af3b-d8fe6a1418f0',
-                categoryName: 'eletronico'
-            },
-            {
-                id: '1861fc64-3afa-4bdc-aee6-aaa87bf6d243',
-                componentId: 'e560d02d-bfad-4c9d-befb-a98e8f68c504',
-                name: 'arduino',
-                serialNumber: '555555588',
-                description: 'arduino',
-                quantity: 2,
-                subCategoryId: '8f3f6967-cd1a-4c8a-8f43-88084bb6a003',
-                subCategoryName: 'arduino',
-                categoryId: 'b50a85af-5672-4ff1-afd4-d03f4af0316e',
-                categoryName: 'placas'
+                "id": "e4ea4fc2-e282-4200-90c9-ddf5446d2952",
+                "componentId": "26742b39-0171-4465-9e8d-b7c606d517ed",
+                "name": "Teste componente para atividade",
+                "serialNumber": "02555",
+                "description": "dd",
+                "quantity": 3,
+                "tutorialLink": "https://youtu.be/sv9dDtYnE1g?si=FtXli4n4vpl6PCza",
+                "projectIdeas": "componente interessante",
+                "librarySuggestions": "Sugestão de Biblioteca",
+                "subCategoryId": "28598648-6f6d-4db9-a688-9c959e325870",
+                "subCategoryName": "ultrassonico",
+                "categoryId": "a748b99f-0ed6-4eef-903f-c4302cbf4280",
+                "categoryName": "sensores"
             }
         ],
-        pageable: {
-            pageNumber: 0,
-            pageSize: 10,
-            sort: { empty: true, sorted: false, unsorted: true },
-            offset: 0,
-            unpaged: false,
-            paged: true
+        "pageable": {
+            "pageNumber": 0,
+            "pageSize": 10,
+            "sort": {
+                "empty": true,
+                "sorted": false,
+                "unsorted": true
+            },
+            "offset": 0,
+            "unpaged": false,
+            "paged": true
         },
-        totalElements: 3,
-        totalPages: 1,
-        last: true,
-        size: 10,
-        number: 0,
-        sort: { empty: true, sorted: false, unsorted: true },
-        numberOfElements: 3,
-        first: true,
-        empty: false
-    };
+        "totalElements": 1,
+        "totalPages": 1,
+        "last": true,
+        "size": 10,
+        "number": 0,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "numberOfElements": 1,
+        "first": true,
+        "empty": false
+    }
+
 
     const loansDetailsResponse = [
         {
@@ -70,6 +70,22 @@ describe('Testes da Biblioteca de Componentes', () => {
         }
     ];
 
+    const loadComponentDetails = {
+        "id": "e4ea4fc2-e282-4200-90c9-ddf5446d2952",
+        "componentId": "26742b39-0171-4465-9e8d-b7c606d517ed",
+        "name": "Teste componente para atividade",
+        "serialNumber": "02555",
+        "description": "dd",
+        "quantity": 3,
+        "tutorialLink": "https://youtu.be/sv9dDtYnE1g?si=FtXli4n4vpl6PCza",
+        "projectIdeas": "componente interessante",
+        "librarySuggestions": "Sugestão de Biblioteca",
+        "subCategoryId": "28598648-6f6d-4db9-a688-9c959e325870",
+        "subCategoryName": "ultrassonico",
+        "categoryId": "a748b99f-0ed6-4eef-903f-c4302cbf4280",
+        "categoryName": "sensores"
+    }
+
     beforeEach(() => {
         cy.loginEstudante();
         cy.visit('/student');
@@ -86,6 +102,11 @@ describe('Testes da Biblioteca de Componentes', () => {
             statusCode: 200,
             body: loansDetailsResponse
         }).as('getDetails');
+
+        cy.intercept('GET', 'http://4.196.97.77:9002/api/v1/components/e4ea4fc2-e282-4200-90c9-ddf5446d2952/with-associations', {
+            statusCode: 200,
+            body: loadComponentDetails
+        }).as('getComponentDetails');
     });
 
     it('Deve abrir a página e carregar as informações básicas', () => {
@@ -93,14 +114,33 @@ describe('Testes da Biblioteca de Componentes', () => {
         cy.wait('@getDetails').its('response.statusCode').should('eq', 200);
 
         cy.get('table').should('exist');
-        cy.get('table tbody tr').should('have.length', 5);
+        cy.get('table tbody tr').should('have.length', 4);
     });
-    
-    it('Deve abrir a página e carregar as informações básicas', () => {
+
+    it('Entrar em um componente e testar funcionalidades', () => {
         cy.wait('@getComponents').its('response.statusCode').should('eq', 200);
         cy.wait('@getDetails').its('response.statusCode').should('eq', 200);
 
-        cy.get('table').should('exist');
-        cy.get('table tbody tr').should('have.length', 5);
+        cy.get(':nth-child(7) > .ant-btn').click()
+        cy.wait('@getComponentDetails').its('response.statusCode').should('eq', 200);
+        cy.get('.ant-breadcrumb-link > span').contains('e4ea4fc2-e282-4200-90c9-ddf5446d2952')
+        cy.get('h2').contains('Teste componente para atividade')
+
+        cy.get(':nth-child(2) > .ant-card-body > .ant-row > :nth-child(2) > .ant-btn').click();
+        cy.wait(1000)
+        cy.get('iframe')
+            .should('have.attr', 'src')
+            .and('include', 'https://www.youtube.com/embed/sv9dDtYnE1g');
+
+
+        cy.get('[style="margin-top: 10px; text-align: left;"] > p').should('not.exist')
+        cy.get(':nth-child(3) > .ant-card-body > .ant-row > :nth-child(2) > .ant-btn').click();
+        cy.get('[style="margin-top: 10px; text-align: left;"] > p').should('be.visible')
+            .should('have.text', 'componente interessante');
+
+        cy.get(':nth-child(4) > .ant-card-body > [style="margin-top: 10px; text-align: left;"] > p').should('not.exist')
+        cy.get(':nth-child(4) > .ant-card-body > .ant-row > :nth-child(2) > .ant-btn').click();
+        cy.get(':nth-child(4) > .ant-card-body > [style="margin-top: 10px; text-align: left;"] > p').should('be.visible')
+            .should('have.text', 'Sugestão de Biblioteca');
     });
 });
