@@ -12,8 +12,7 @@ jobs:
 
     steps:
       # Checkout do código
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       
@@ -48,11 +47,11 @@ jobs:
         run: |
           npx wait-on http://localhost:5173
 
-      # Executar testes Cypress com o repórter mocha-sonarqube-reporter
+      # Executar testes Cypress
       - name: Run Cypress Tests
         run: |
           mkdir -p test-results/cypress
-          npx cypress run --reporter mocha-sonarqube-reporter --reporter-options "output=test-results/cypress/results-sonarqube.xml"
+          npx cypress run 
         env:
           CI: true
 
@@ -67,7 +66,6 @@ jobs:
             -Dsonar.projectKey=robotics-lab-system-frontend-Two
             -Dsonar.sources=src
             -Dsonar.typescript.tsconfigPath=tsconfig.json
-            -Dsonar.testExecutionReportPaths=test-results/cypress/results-sonarqube.xml
 
       # Verificação do Quality Gate
       - name: Check SonarQube Quality Gate
