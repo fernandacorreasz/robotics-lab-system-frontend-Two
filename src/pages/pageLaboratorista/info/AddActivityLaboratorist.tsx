@@ -41,7 +41,6 @@ const AddActivityLaboratorist: React.FC = () => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [components, setComponents] = useState<Component[]>([]);
-  const [selectedComponents, setSelectedComponents] = useState<Component[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,8 +59,7 @@ const AddActivityLaboratorist: React.FC = () => {
         startDate: values.startDate.toISOString(),
         user: {
           id: localStorage.getItem("userId") || "",
-        },
-        componentsUsed: selectedComponents.map((comp) => ({ id: comp.id })),
+        }
       };
 
       const formData = new FormData();
@@ -105,10 +103,6 @@ const AddActivityLaboratorist: React.FC = () => {
       setLoading(false);
       setIsModalVisible(true);
     }
-  };
-
-  const handleComponentSelection = (selectedRowKeys: React.Key[], selectedRows: Component[]) => {
-    setSelectedComponents(selectedRows);
   };
 
   const handleModalOk = () => {
@@ -196,9 +190,6 @@ const AddActivityLaboratorist: React.FC = () => {
           <Button type="dashed" onClick={handleOpenModal} icon={<EyeOutlined />}>
             Selecionar Componentes
           </Button>
-          <p>
-            {selectedComponents.length} componente(s) selecionado(s)
-          </p>
         </Form.Item>
         <Form.Item label="Imagem (Opcional)">
           <Upload
@@ -232,10 +223,6 @@ const AddActivityLaboratorist: React.FC = () => {
           <Spin size="large" />
         ) : (
           <Table
-            rowSelection={{
-              type: "checkbox",
-              onChange: handleComponentSelection,
-            }}
             dataSource={components}
             columns={componentColumns}
             pagination={{
