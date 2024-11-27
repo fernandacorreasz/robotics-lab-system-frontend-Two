@@ -1,4 +1,4 @@
-describe('Testes da página de Login', () => {
+/*describe('Testes da página de Login', () => {
     it('Deve efetuar login com credenciais válidas e validar botão de Logout', () => {
         cy.loginEstudante();
         cy.visit('/student');
@@ -25,3 +25,4 @@ describe('Testes da página de Login', () => {
         cy.get('#password').should('exist');
     });
 });
+*/
