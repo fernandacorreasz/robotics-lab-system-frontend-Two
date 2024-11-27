@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, message, Card, Row, Col, Tooltip, Input, Tag } from "antd";
-import { EyeOutlined, DownOutlined, UpOutlined, SearchOutlined } from "@ant-design/icons";
+import { Table, Button, message, Card, Row, Col, Tooltip, Input, Tag, Modal } from "antd";
+import { EyeOutlined, DownOutlined, UpOutlined, SearchOutlined, FileTextOutlined } from "@ant-design/icons";
 import RequestLoanModal from "./loan/RequestLoanModal";
 import { useNavigate } from "react-router-dom";
 import RoboticImage from "../../assets/img/robotic.png";
@@ -51,7 +51,13 @@ const ComponentsLibraryStudent: React.FC = () => {
   const [loadingStudentLoans, setLoadingStudentLoans] = useState<boolean>(false);
   const [loanFilter, setLoanFilter] = useState<string>("");
   const navigate = useNavigate();
-
+  const [descriptionModal, setDescriptionModal] = useState<{
+    visible: boolean;
+    description: string;
+  }>({
+    visible: false,
+    description: "",
+  });
   const loadStudentLoans = async (page = 0, size = 10) => {
     try {
       setLoadingStudentLoans(true);
@@ -140,7 +146,24 @@ const ComponentsLibraryStudent: React.FC = () => {
   const filteredColumns = [
     { title: "Nome", dataIndex: "name", key: "name" },
     { title: "Número de Série", dataIndex: "serialNumber", key: "serialNumber" },
-    { title: "Descrição", dataIndex: "description", key: "description" },
+    {
+      title: (
+        <Tooltip title="Descrição detalhada do componente">Descrição</Tooltip>
+      ),
+      dataIndex: "description",
+      key: "description",
+      render: (text: string) => (
+        <Tooltip title="Ver Descrição Completa">
+          <Button
+            type="link"
+            icon={<FileTextOutlined />}
+            onClick={() =>
+              setDescriptionModal({ visible: true, description: text })
+            }
+          />
+        </Tooltip>
+      ),
+    },
     { title: "Quantidade", dataIndex: "quantity", key: "quantity" },
     { title: "Subcategoria", dataIndex: "subCategoryName", key: "subCategoryName" },
     { title: "Categoria", dataIndex: "categoryName", key: "categoryName" },
@@ -161,7 +184,24 @@ const ComponentsLibraryStudent: React.FC = () => {
   // Colunas para a segunda tabela
   const loanColumns = [
     { title: <Tooltip title="Nome do componente">Nome</Tooltip>, dataIndex: "name", key: "name" },
-    { title: <Tooltip title="Descrição detalhada do componente">Descrição</Tooltip>, dataIndex: "description", key: "description" },
+     {
+      title: (
+        <Tooltip title="Descrição detalhada do componente">Descrição</Tooltip>
+      ),
+      dataIndex: "description",
+      key: "description",
+      render: (text: string) => (
+        <Tooltip title="Ver Descrição Completa">
+          <Button
+            type="link"
+            icon={<FileTextOutlined />}
+            onClick={() =>
+              setDescriptionModal({ visible: true, description: text })
+            }
+          />
+        </Tooltip>
+      ),
+    },
     { title: <Tooltip title="Quantidade total disponível no estoque">Total no Estoque</Tooltip>, dataIndex: "totalQuantity", key: "totalQuantity" },
     { title: <Tooltip title="Quantidade atualmente solicitada">Solicitada</Tooltip>, dataIndex: "requestedQuantity", key: "requestedQuantity" },
     { title: <Tooltip title="Quantidade autorizada para empréstimo">Autorizada</Tooltip>, dataIndex: "authorizedQuantity", key: "authorizedQuantity" },
@@ -386,7 +426,26 @@ const studentLoanColumns = [
           onClose={() => setSelectedComponent(null)}
           componentName={selectedComponent}
         />
-      )}
+      )}   <Modal
+      title="Descrição Completa"
+      visible={descriptionModal.visible}
+      onCancel={() =>
+        setDescriptionModal({ visible: false, description: "" })
+      }
+      footer={[
+        <Button
+          key="close"
+          onClick={() =>
+            setDescriptionModal({ visible: false, description: "" })
+          }
+        >
+          Fechar
+        </Button>,
+      ]}
+    >
+      <p>{descriptionModal.description}</p>
+    </Modal>
+
     </>
   );
 };

@@ -13,8 +13,14 @@ import {
   Card,
   Input,
   Form,
+  Select,
 } from "antd";
-import { DownOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
   fetchComponents,
@@ -46,6 +52,13 @@ const ManageStockLaboratorist: React.FC = () => {
   );
   const [editComponent, setEditComponent] = useState<Component | null>(null);
   const navigate = useNavigate();
+  const [descriptionModal, setDescriptionModal] = useState<{
+    visible: boolean;
+    description: string;
+  }>({
+    visible: false,
+    description: "",
+  });
 
   useEffect(() => {
     loadComponents(currentPage - 1, pageSize);
@@ -88,8 +101,8 @@ const ManageStockLaboratorist: React.FC = () => {
       message.success("Componente atualizado com sucesso!");
       setEditComponent(null);
       loadComponents(currentPage - 1, pageSize);
-    }catch {
-      throw new Error('Erro ao  atualizar o componente.');
+    } catch {
+      throw new Error("Erro ao  atualizar o componente.");
     }
   };
 
@@ -101,7 +114,25 @@ const ManageStockLaboratorist: React.FC = () => {
       dataIndex: "serialNumber",
       key: "serialNumber",
     },
-    { title: "Descrição", dataIndex: "description", key: "description" },
+    {
+      title: "Descrição",
+      dataIndex: "description",
+      key: "description",
+      render: (text: string, record: Component) => (
+        <Tooltip title="Ver Descrição Completa">
+          <Button
+            type="link"
+            icon={<FileTextOutlined />}
+            onClick={() =>
+              setDescriptionModal({
+                visible: true,
+                description: record.description,
+              })
+            }
+          />
+        </Tooltip>
+      ),
+    },
     { title: "Quantidade", dataIndex: "quantity", key: "quantity" },
     {
       title: "Subcategoria",
@@ -235,7 +266,25 @@ const ManageStockLaboratorist: React.FC = () => {
         visible={isSubCategoryModalVisible}
         onClose={() => setSubCategoryModalVisible(false)}
       />
-
+      <Modal
+        visible={descriptionModal.visible}
+        title="Descrição Completa"
+        onCancel={() =>
+          setDescriptionModal({ visible: false, description: "" })
+        }
+        footer={[
+          <Button
+            key="close"
+            onClick={() =>
+              setDescriptionModal({ visible: false, description: "" })
+            }
+          >
+            Fechar
+          </Button>,
+        ]}
+      >
+        <p>{descriptionModal.description}</p>
+      </Modal>
       <Modal
         visible={!!deleteSerialNumber}
         title="Confirmar Exclusão"
@@ -248,66 +297,191 @@ const ManageStockLaboratorist: React.FC = () => {
       </Modal>
 
       {editComponent && (
-        <Modal
-          visible={!!editComponent}
-          title="Editar Componente"
-          onCancel={() => setEditComponent(null)}
-          onOk={() =>
-            handleEditComponent({
-              name: editComponent.name,
-              serialNumber: editComponent.serialNumber,
-              description: editComponent.description,
-              quantity: editComponent.quantity,
-            })
-          }
-          okText="Salvar"
-          cancelText="Cancelar"
-        >
-          <Form layout="vertical" initialValues={editComponent}>
-            <Form.Item label="Nome" name="name">
-              <Input
-                defaultValue={editComponent.name}
-                onChange={(e) =>
-                  setEditComponent({ ...editComponent, name: e.target.value })
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Número de Série" name="serialNumber">
-              <Input
-                defaultValue={editComponent.serialNumber}
-                onChange={(e) =>
-                  setEditComponent({
-                    ...editComponent,
-                    serialNumber: e.target.value,
-                  })
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Descrição" name="description">
-              <Input.TextArea
-                defaultValue={editComponent.description}
-                onChange={(e) =>
-                  setEditComponent({
-                    ...editComponent,
-                    description: e.target.value,
-                  })
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Quantidade" name="quantity">
-              <Input
-                type="number"
-                defaultValue={editComponent.quantity}
-                onChange={(e) =>
-                  setEditComponent({
-                    ...editComponent,
-                    quantity: parseInt(e.target.value, 10),
-                  })
-                }
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
+     <Modal
+     visible={!!editComponent}
+     title="Editar Componente"
+     onCancel={() => setEditComponent(null)}
+     onOk={() => {
+       if (
+         editComponent?.discardedQuantity &&
+         editComponent?.discardedQuantity > (editComponent?.quantity || 0)
+       ) {
+         message.error(
+           "A quantidade descartada não pode ser superior à quantidade total disponível."
+         );
+         return;
+       }
+   
+       handleEditComponent({
+         name: editComponent.name,
+         serialNumber: editComponent.serialNumber,
+         description: editComponent.description,
+         quantity: editComponent.quantity,
+         tutorialLink: editComponent.tutorialLink,
+         projectIdeas: editComponent.projectIdeas,
+         librarySuggestions: editComponent.librarySuggestions,
+         defectiveQuantity: editComponent.defectiveQuantity,
+         discardedQuantity: editComponent.discardedQuantity,
+         status: editComponent.status,
+       });
+     }}
+     okText="Salvar"
+     cancelText="Cancelar"
+   >
+     <Form layout="vertical" initialValues={editComponent}>
+       <Form.Item label="Nome" name="name">
+         <Input
+           defaultValue={editComponent?.name}
+           onChange={(e) =>
+             setEditComponent({ ...editComponent, name: e.target.value })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Número de Série" name="serialNumber">
+         <Input
+           defaultValue={editComponent?.serialNumber}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               serialNumber: e.target.value,
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Descrição" name="description">
+         <Input.TextArea
+           defaultValue={editComponent?.description}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               description: e.target.value,
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Quantidade" name="quantity">
+         <Input
+           type="number"
+           defaultValue={editComponent?.quantity}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               quantity: parseInt(e.target.value, 10),
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Itens Defeituosos" name="defectiveQuantity">
+         <Input
+           type="number"
+           min={0}
+           defaultValue={editComponent?.defectiveQuantity}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               defectiveQuantity: parseInt(e.target.value, 10),
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item
+         label={
+           <Tooltip title="A quantidade descartada será subtraída da quantidade total disponível.">
+             Itens Descartados
+           </Tooltip>
+         }
+         name="discardedQuantity"
+       >
+         <Input
+           type="number"
+           min={0}
+           defaultValue={editComponent?.discardedQuantity}
+           onChange={(e) => {
+             const discarded = parseInt(e.target.value, 10);
+             if (discarded > (editComponent?.quantity || 0)) {
+               message.error(
+                 "A quantidade descartada não pode ser superior à quantidade total disponível."
+               );
+               return;
+             }
+             setEditComponent({
+               ...editComponent,
+               discardedQuantity: discarded,
+             });
+           }}
+         />
+       </Form.Item>
+       <Form.Item label="Status" name="status">
+         <Select
+           defaultValue={editComponent?.status}
+           onChange={(value) =>
+             setEditComponent({
+               ...editComponent,
+               status: value,
+             })
+           }
+         >
+           <Select.Option value="AVAILABLE">Disponível</Select.Option>
+           <Select.Option value="DEFECTIVE">Com Defeito</Select.Option>
+           <Select.Option value="DISCARDED">Descartado</Select.Option>
+           <Select.Option value="IN_USE">Em Uso</Select.Option>
+           <Select.Option value="UNDER_MAINTENANCE">
+             Em Manutenção
+           </Select.Option>
+         </Select>
+       </Form.Item>
+       <Form.Item
+         label="Link para Tutorial (YouTube)"
+         name="tutorialLink"
+         rules={[
+           {
+             type: "url",
+             message: "Insira um URL válido.",
+           },
+           {
+             pattern: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+             message: "Insira um link do YouTube válido.",
+           },
+         ]}
+       >
+         <Input
+           placeholder="Ex.: https://www.youtube.com/..."
+           defaultValue={editComponent?.tutorialLink}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               tutorialLink: e.target.value,
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Ideias de Projetos" name="projectIdeas">
+         <Input.TextArea
+           placeholder="Dicas para projetos usando o componente"
+           defaultValue={editComponent?.projectIdeas}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               projectIdeas: e.target.value,
+             })
+           }
+         />
+       </Form.Item>
+       <Form.Item label="Sugestões de Bibliotecas" name="librarySuggestions">
+         <Input.TextArea
+           placeholder="Sugestões de bibliotecas para usar com o componente"
+           defaultValue={editComponent?.librarySuggestions}
+           onChange={(e) =>
+             setEditComponent({
+               ...editComponent,
+               librarySuggestions: e.target.value,
+             })
+           }
+         />
+       </Form.Item>
+     </Form>
+   </Modal>
+   
       )}
     </div>
   );

@@ -9,5 +9,11 @@ export interface Component {
     subCategoryName: string;
     categoryId: string;
     categoryName: string;
+    tutorialLink?: string;
+    projectIdeas?: string; 
+    librarySuggestions?: string;
+    defectiveQuantity?: number;
+    discardedQuantity?: number;
+    status?: string;
   }
   

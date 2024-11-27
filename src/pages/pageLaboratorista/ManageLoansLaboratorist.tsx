@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import {
-  Table, Button, message, Tag, Modal, Input, Row, Card, Col, Tooltip} from "antd";
+  Table,
+  Button,
+  message,
+  Tag,
+  Modal,
+  Input,
+  Row,
+  Card,
+  Col,
+  Tooltip,
+} from "antd";
 import { Loan } from "../../models/Loan";
 import {
   authorizeLoan,
@@ -14,6 +24,7 @@ import {
   UpOutlined,
   SearchOutlined,
   EyeOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { ComponentDetails } from "../../models/ComponentDetails";
@@ -43,7 +54,8 @@ const ManageLoansLaboratorist: React.FC = () => {
   const [isLoanCardVisible, setLoanCardVisible] = useState<boolean>(true);
   const [loadingLoans, setLoadingLoans] = useState<boolean>(false);
   const [loanComponents, setLoanComponents] = useState<ComponentDetails[]>([]);
-  const [isFilteredCardVisible, setFilteredCardVisible] = useState<boolean>(true);
+  const [isFilteredCardVisible, setFilteredCardVisible] =
+    useState<boolean>(true);
   const [filteredLoans, setFilteredLoans] = useState<Loan[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [filteredLoanComponents, setFilteredLoanComponents] = useState<
@@ -53,6 +65,14 @@ const ManageLoansLaboratorist: React.FC = () => {
   const navigate = useNavigate();
   const [returnModalVisible, setReturnModalVisible] = useState(false);
   const [returnQuantity, setReturnQuantity] = useState<number>(1);
+  const [descriptionModal, setDescriptionModal] = useState<{
+    visible: boolean;
+    description: string;
+  }>({
+    visible: false,
+    description: "",
+  });
+
   useEffect(() => {
     loadLoans();
   }, []);
@@ -177,25 +197,25 @@ const ManageLoansLaboratorist: React.FC = () => {
       );
     }
   };
-  
+
   const handleRejectLoan = async (loan: Loan) => {
     const authorizerEmail = localStorage.getItem("email");
     if (!authorizerEmail) {
       message.error("E-mail do autorizador não encontrado.");
       return;
     }
-  
+
     try {
       await rejectLoan({ loanId: loan.id, authorizerEmail });
       message.success("Empréstimo recusado com sucesso!");
-      loadLoans(); 
+      loadLoans();
     } catch (error) {
       message.error(
         error instanceof Error ? error.message : "Erro ao recusar empréstimo."
       );
     }
   };
-  
+
   useEffect(() => {
     loadLoans();
   }, [page]);
@@ -278,7 +298,14 @@ const ManageLoansLaboratorist: React.FC = () => {
             </Button>
           )}
           {record.status === "PENDING_AUTHORIZATION" && (
-            <Button style={{marginLeft:"2px", backgroundColor:"#A31F00", color:"#fff"}}  onClick={() => handleRejectLoan(record)}>
+            <Button
+              style={{
+                marginLeft: "2px",
+                backgroundColor: "#A31F00",
+                color: "#fff",
+              }}
+              onClick={() => handleRejectLoan(record)}
+            >
               RECUSAR
             </Button>
           )}
@@ -294,9 +321,7 @@ const ManageLoansLaboratorist: React.FC = () => {
               Registrar Devolução
             </Button>
           )}
-          
         </>
-        
       ),
     },
   ];
@@ -313,6 +338,17 @@ const ManageLoansLaboratorist: React.FC = () => {
       ),
       dataIndex: "description",
       key: "description",
+      render: (text: string) => (
+        <Tooltip title="Ver Descrição Completa">
+          <Button
+            type="link"
+            icon={<FileTextOutlined />}
+            onClick={() =>
+              setDescriptionModal({ visible: true, description: text })
+            }
+          />
+        </Tooltip>
+      ),
     },
     {
       title: (
@@ -332,9 +368,7 @@ const ManageLoansLaboratorist: React.FC = () => {
     },
     {
       title: (
-        <Tooltip title="Quantidade emprestado">
-          Quantidade emprestado
-        </Tooltip>
+        <Tooltip title="Quantidade emprestado">Quantidade emprestado</Tooltip>
       ),
       dataIndex: "authorizedQuantity",
       key: "authorizedQuantity",
@@ -375,7 +409,7 @@ const ManageLoansLaboratorist: React.FC = () => {
         <Row align="middle" justify="space-between">
           <Col>
             <h3 style={{ margin: 0, textAlign: "left" }}>
-              Monitoramento de empestrimos 
+              Monitoramento de empestrimos
             </h3>
           </Col>
           <Col>
@@ -393,28 +427,27 @@ const ManageLoansLaboratorist: React.FC = () => {
               justify="start"
             >
               <Col>
-              <FilterLaonsLab
-              onApply={(newFilters) => {
-                setFilters(newFilters);
-              }}
-            />
+                <FilterLaonsLab
+                  onApply={(newFilters) => {
+                    setFilters(newFilters);
+                  }}
+                />
               </Col>
             </Row>
             <Table
-          dataSource={filteredLoans}
-          columns={columns}
-          rowKey="id"
-          loading={loading}
-          pagination={{
-            current: page + 1,
-            pageSize: 10,
-            onChange: (p) => setPage(p - 1),
-          }}
-        />
+              dataSource={filteredLoans}
+              columns={columns}
+              rowKey="id"
+              loading={loading}
+              pagination={{
+                current: page + 1,
+                pageSize: 10,
+                onChange: (p) => setPage(p - 1),
+              }}
+            />
           </>
         )}
       </Card>
-
 
       <Card style={{ marginBottom: "20px", padding: "10px" }}>
         <Row align="middle" justify="space-between">
@@ -456,6 +489,25 @@ const ManageLoansLaboratorist: React.FC = () => {
           </>
         )}
       </Card>
+      <Modal
+        title="Descrição Completa"
+        visible={descriptionModal.visible}
+        onCancel={() =>
+          setDescriptionModal({ visible: false, description: "" })
+        }
+        footer={[
+          <Button
+            key="close"
+            onClick={() =>
+              setDescriptionModal({ visible: false, description: "" })
+            }
+          >
+            Fechar
+          </Button>,
+        ]}
+      >
+        <p>{descriptionModal.description}</p>
+      </Modal>
 
       <Modal
         title="Autorizar Empréstimo"
