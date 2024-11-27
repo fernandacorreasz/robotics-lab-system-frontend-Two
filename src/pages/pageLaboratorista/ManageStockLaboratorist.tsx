@@ -118,7 +118,7 @@ const ManageStockLaboratorist: React.FC = () => {
       title: "Descrição",
       dataIndex: "description",
       key: "description",
-      render: (text: string, record: Component) => (
+      render: (_text: string, record: Component) => (
         <Tooltip title="Ver Descrição Completa">
           <Button
             type="link"
