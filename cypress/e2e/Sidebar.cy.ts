@@ -44,7 +44,7 @@ describe('Testes da sidebar', () => {
             }
         });
     });
-
+//teste
     it('Deve mostrar as opções liberadas ao perfil de admin', () => {
         cy.loginAdmin();
         cy.visit('/admin');
