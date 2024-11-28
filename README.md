@@ -37,40 +37,7 @@ https://github.com/user-attachments/assets/9fea6bcc-2783-4c7b-9e71-77122846638d
 - **Ambiente de Desenvolvimento:** Node.js
 - **Estado atual:** Sem testes implementados
 
----
 
-## Módulos da Aplicação
-
-A aplicação está dividida em três módulos principais, cada um com suas próprias funcionalidades.
-
-### **1. Módulo Administrador**
-O módulo do administrador permite a gestão completa do sistema. As principais funcionalidades incluem:
-- **Dashboard:** Visão geral do sistema.
-- **Gerenciar Usuários:** Cadastro, edição e remoção de usuários.
-- **Certificados:** Emissão de certificados para estudantes.
-- **Relatórios de Desempenho:** Análise das atividades e progresso dos estudantes.
-- **Fórum-SAC:** Espaço para tirar dúvidas e fornecer suporte.
-- **Configurações de Perfil:** Ajuste de informações pessoais e de sistema.
-
-### **2. Módulo Laboratorista**
-O módulo do laboratorista é focado no gerenciamento prático do laboratório:
-- **Dashboard:** Visão geral de equipamentos, atividades e demandas.
-- **Gerenciar Atividades:** Controle das atividades realizadas no laboratório.
-- **Gerenciar Estoque:** Cadastro e controle de componentes e equipamentos.
-- **Gerenciar Empréstimos:** Controle de empréstimos de equipamentos.
-- **Fórum:** Comunicação com estudantes e administradores.
-- **Gerenciar Usuários:** Gestão de usuários vinculados ao laboratório.
-
-
-### **3. Módulo Estudante**
-O módulo do estudante fornece acesso às ferramentas necessárias para seus projetos e aprendizado:
-- **Dashboard:** Visão geral de notificações, atividades e progresso.
-- **Atividades:** Consulta e gerenciamento das atividades atribuídas.
-- **Biblioteca de Componentes:** Visualização dos componentes disponíveis no laboratório.
-- **Fórum:** Comunicação com laboratoristas e outros estudantes.
-- **Solicitar Certificado:** Envio de pedidos de certificados ao administrador.
-
----
 
 ## Vídeo Explicativo
 
