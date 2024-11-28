@@ -14,8 +14,8 @@ https://github.com/user-attachments/assets/9fea6bcc-2783-4c7b-9e71-77122846638d
 
 ## Acesso à aplicação
 
-- **Frontend em execução:** [http://4.196.97.77:5173/](http://4.196.97.77:5173/)
-- **Documentação da API:** [http://4.196.97.77:9002/swagger-ui/index.html#/](http://4.196.97.77:9002/swagger-ui/index.html#/)
+- **Frontend em execução:** disponibilizar em breve
+- **Documentação da API:** disponibilizar em breve
 
 ---
 
@@ -69,20 +69,6 @@ O módulo do estudante fornece acesso às ferramentas necessárias para seus pro
 - **Biblioteca de Componentes:** Visualização dos componentes disponíveis no laboratório.
 - **Fórum:** Comunicação com laboratoristas e outros estudantes.
 - **Solicitar Certificado:** Envio de pedidos de certificados ao administrador.
-
----
-## Diagrama de Casos de Uso
-
-Abaixo está um diagrama básico representando os principais casos de uso do sistema. Ele destaca as interações dos três perfis de usuários: Administrador, Laboratorista e Estudante.
-
-
----
-
-## Documentação
-
-A documentação detalhada da aplicação pode ser acessada logo a baixo
-[Portfolio academico (2).pdf](https://github.com/user-attachments/files/17809456/Portfolio.academico.2.pdf)
-
 
 ---
 
