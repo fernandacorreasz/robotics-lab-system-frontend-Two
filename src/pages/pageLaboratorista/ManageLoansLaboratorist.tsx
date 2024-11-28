@@ -222,12 +222,6 @@ const ManageLoansLaboratorist: React.FC = () => {
 
   const columns = [
     {
-      title: "ID Empréstimo",
-      dataIndex: "loanId",
-      key: "loanId",
-      render: (value: string | null) => value || "Sem valor",
-    },
-    {
       title: "E-mail Solicitante",
       dataIndex: "borrowerEmail",
       key: "borrowerEmail",
