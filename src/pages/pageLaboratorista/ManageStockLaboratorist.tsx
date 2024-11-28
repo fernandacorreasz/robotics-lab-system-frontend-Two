@@ -36,6 +36,21 @@ import CategoryModal from "./info/CategoryModal";
 import SubCategoryModal from "./info/SubCategoryModal";
 import { ColumnsType } from "antd/es/table";
 import RoboticImage from "../../assets/img/robotic.png";
+import { saveAs } from "file-saver";
+
+
+const convertToCSV = (data: any[]): string => {
+  if (data.length === 0) return "";
+
+  const headers = Object.keys(data[0]).join(",");
+  const rows = data.map((row) =>
+    Object.values(row)
+      .map((value) => `"${value}"`)
+      .join(",")
+  );
+
+  return [headers, ...rows].join("\n");
+};
 
 const ManageStockLaboratorist: React.FC = () => {
   const [components, setComponents] = useState<Component[]>([]);
@@ -186,7 +201,67 @@ const ManageStockLaboratorist: React.FC = () => {
       </Menu.Item>
     </Menu>
   );
+  const handleGenerateReport = (type: string) => {
+    let filteredData;
+    let filename;
 
+    switch (type) {
+      case "disposables":
+        filteredData = components.map((c) => ({
+          Nome: c.name,
+          Quantidade: c.quantity,
+          "Itens Descartados": c.discardedQuantity,
+        }));
+        filename = "relatorio_descartaveis.csv";
+        break;
+
+      case "registered":
+        filteredData = components.map((c) => ({
+          ID: c.id,
+          Nome: c.name,
+          Categoria: c.categoryName,
+          Subcategoria: c.subCategoryName,
+          "Número de Série": c.serialNumber,
+          Quantidade: c.quantity,
+        }));
+        filename = "relatorio_cadastrados.csv";
+        break;
+
+      case "unavailable":
+        filteredData = components
+          .filter((c) => c.status !== "AVAILABLE")
+          .map((c) => ({
+            Nome: c.name,
+            Status: c.status,
+            Quantidade: c.quantity,
+          }));
+        filename = "relatorio_indisponiveis.csv";
+        break;
+
+      default:
+        message.error("Tipo de relatório inválido.");
+        return;
+    }
+
+    const csvData = convertToCSV(filteredData);
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, filename);
+    message.success(`Relatório "${type}" gerado com sucesso!`);
+  };
+
+  const menut = (
+    <Menu>
+      <Menu.Item key="disposables" onClick={() => handleGenerateReport("disposables")}>
+        Relatório de Componentes Descartáveis
+      </Menu.Item>
+      <Menu.Item key="registered" onClick={() => handleGenerateReport("registered")}>
+        Relatório de Componentes Cadastrados
+      </Menu.Item>
+      <Menu.Item key="unavailable" onClick={() => handleGenerateReport("unavailable")}>
+        Relatório de Componentes Indisponíveis
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <div>
       <Card
@@ -222,10 +297,10 @@ const ManageStockLaboratorist: React.FC = () => {
       </Card>
 
       <Row gutter={16} style={{ marginBottom: "20px" }}>
-        <Col span={18} style={{ textAlign: "left" }}>
+        <Col span={16} style={{ textAlign: "left" }}>
           <FilterComponent onApply={handleApplyFilter} />
         </Col>
-        <Col span={6} style={{ textAlign: "right" }}>
+        <Col span={4} style={{ textAlign: "right" }}>
           <Space>
             <Dropdown overlay={menu} trigger={["click"]}>
               <Button type="primary">
@@ -234,6 +309,15 @@ const ManageStockLaboratorist: React.FC = () => {
             </Dropdown>
           </Space>
         </Col>
+          <Col span={4}>
+          <Space>
+            <Dropdown overlay={menut} trigger={["click"]}>
+              <Button type="primary">
+                Exportar Relatórios <DownOutlined />
+              </Button>
+            </Dropdown>
+          </Space>
+          </Col>
       </Row>
 
       <CustomTable
