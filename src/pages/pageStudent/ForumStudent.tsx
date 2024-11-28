@@ -15,10 +15,12 @@ import RoboticImage from "../../assets/img/robotic.png";
 import FilterForum from "./info/FilterForum";
 import CreateQuestionModal from "./info/CreateQuestionForumModal";
 import UpdateQuestionModal from "./info/UpdateQuestionModal";
+import { useNavigate } from "react-router-dom";
 
 const ForumStudent: React.FC = () => {
   const [forums, setForums] = useState<Forum[]>([]);
   const [tags, setTags] = useState<TagModel[]>([]);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<
     Array<{ column: string; filterType: string; value: string }>
   >([]);
@@ -247,12 +249,11 @@ const ForumStudent: React.FC = () => {
               <Row justify="end" style={{ marginTop: "10px" }}>
                 <Button
                   icon={<CommentOutlined />}
-                  onClick={() =>
-                    (window.location.href = `/student/forum/${forum.id}`)
-                  }
+                  onClick={() => navigate(`/student/forum/${forum.id}`)}
                 >
                   Ver Comentários
                 </Button>
+                ;
                 {isOwner && (
                   <>
                     <Button
