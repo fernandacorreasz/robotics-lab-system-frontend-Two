@@ -14,7 +14,7 @@ https://github.com/user-attachments/assets/9fea6bcc-2783-4c7b-9e71-77122846638d
 
 ## Acesso à aplicação
 
-- **Frontend em execução:** [disponibilizar em breve](https://robotics-lab-system.vercel.app/)
+- **Frontend em execução:** https://robotics-lab-system.vercel.app/ 
 - **Documentação da API:** disponibilizar em breve
 
 ---
