@@ -2,7 +2,7 @@
 Cypress.Commands.add('loginEstudante', (email = 'maria@catolicasc.edu.br', password = 'senha123') => {
     cy.request({
         method: 'POST',
-        url: 'http://4.196.97.77:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
+        url: 'https://roboticslabsystem.australiaeast.cloudapp.azure.com:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
         body: { email, password },
     }).then((response) => {
         // Salve o token no localStorage ou cookies, dependendo da implementação da sua aplicação
@@ -17,7 +17,7 @@ Cypress.Commands.add('loginEstudante', (email = 'maria@catolicasc.edu.br', passw
 Cypress.Commands.add('loginLaboratorista', (email = 'miguel@catolicasc.edu.br', password = 'senha123') => {
     cy.request({
         method: 'POST',
-        url: 'http://4.196.97.77:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
+        url: 'https://roboticslabsystem.australiaeast.cloudapp.azure.com:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
         body: { email, password },
     }).then((response) => {
         // Salve o token no localStorage ou cookies, dependendo da implementação da sua aplicação
@@ -33,7 +33,7 @@ Cypress.Commands.add('loginLaboratorista', (email = 'miguel@catolicasc.edu.br', 
 Cypress.Commands.add('loginAdmin', (email = 'miguel@catolicasc.edu.br', password = 'senha123') => {
     cy.request({
         method: 'POST',
-        url: 'http://4.196.97.77:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
+        url: 'https://roboticslabsystem.australiaeast.cloudapp.azure.com:9002/api/v1/auth/login', // Substitua pela rota de login da sua API
         body: { email, password },
     }).then((response) => {
         // Salve o token no localStorage ou cookies, dependendo da implementação da sua aplicação
