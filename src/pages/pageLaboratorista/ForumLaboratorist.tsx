@@ -15,6 +15,7 @@ import RoboticImage from "../../assets/img/robotic.png";
 import FilterForum from "../pageStudent/info/FilterForum";
 import CreateQuestionModal from "../pageStudent/info/CreateQuestionForumModal";
 import UpdateQuestionModal from "../pageStudent/info/UpdateQuestionModal";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -40,6 +41,7 @@ const ForumLaboratorist: React.FC = () => {
     tagIds: [],
   });
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [questionToEdit, setQuestionToEdit] = useState<{
     id: string;
     title: string;
@@ -247,14 +249,12 @@ const ForumLaboratorist: React.FC = () => {
                 </Col>
               </Row>
               <Row justify="end" style={{ marginTop: "10px" }}>
-                <Button
-                  icon={<CommentOutlined />}
-                  onClick={() =>
-                    (window.location.href = `/laboratorist/forum/${forum.id}`)
-                  }
-                >
-                  Ver Comentários
-                </Button>
+              <Button
+    icon={<CommentOutlined />}
+    onClick={() => navigate(`/laboratorist/forum/${forum.id}`)}
+  >
+    Ver Comentários
+  </Button>;
                 {isOwner && (
                   <>
                     <Button
