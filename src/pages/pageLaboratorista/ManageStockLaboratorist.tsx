@@ -107,7 +107,6 @@ const ManageStockLaboratorist: React.FC = () => {
   };
 
   const columns: ColumnsType<Component> = [
-    { title: "ID", dataIndex: "id", key: "id" },
     { title: "Nome do Componente", dataIndex: "name", key: "name" },
     {
       title: "Número de Série",
