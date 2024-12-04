@@ -101,18 +101,38 @@ const ManageLoansLaboratorist: React.FC = () => {
     filters.forEach((filter) => {
       updatedLoans = updatedLoans.filter((loan) => {
         const value = loan[filter.column as keyof Loan]?.toString() || "";
-        if (filter.filterType === "like") {
-          return value.toLowerCase().includes(filter.value.toLowerCase());
-        } else if (filter.filterType === "equal") {
-          return value === filter.value;
-        } else if (filter.filterType === "not_equal") {
-          return value !== filter.value;
+  
+        if (filter.column.includes("Date")) {
+          // Trata colunas de data
+          const loanDate = new Date(value);
+          const filterDate = new Date(filter.value);
+  
+          if (filter.filterType === "before") {
+            return loanDate < filterDate;
+          } else if (filter.filterType === "after") {
+            return loanDate > filterDate;
+          } else if (filter.filterType === "equal") {
+            return (
+              loanDate.toLocaleDateString() === filterDate.toLocaleDateString()
+            );
+          }
+        } else {
+          // Trata colunas padrão (não de data)
+          if (filter.filterType === "like") {
+            return value.toLowerCase().includes(filter.value.toLowerCase());
+          } else if (filter.filterType === "equal") {
+            return value === filter.value;
+          } else if (filter.filterType === "not_equal") {
+            return value !== filter.value;
+          }
         }
+  
         return true;
       });
     });
     setFilteredLoans(updatedLoans);
   };
+  
 
   const handleLoanFilter = (value: string) => {
     setLoanFilter(value);
